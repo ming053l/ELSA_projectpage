@@ -18,27 +18,37 @@
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  
   <link rel="stylesheet" href="./static/css/index.css">
   
   <script>
     window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      },
-      svg: {
-        fontCache: 'global'
-      }
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
     };
   </script>
-  <script type="text/javascript" id="MathJax-script" async
-    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-  </script>
+  <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="#abstract">Abstract</a>
+      <a class="navbar-item" href="#method">Method</a>
+      <a class="navbar-item" href="#results">Results</a>
+      <a class="navbar-item" href="#deployment">Deployment</a>
+    </div>
+  </div>
+</nav>
 
 <section class="hero">
   <div class="hero-body">
@@ -47,22 +57,15 @@
         <div class="column has-text-centered">
           <h1 class="title is-1 publication-title">ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers</h1>
           <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              <a href="https://cchsu.info/">Chih-Chung Hsu</a>,
-            </span>
+            <span class="author-block"><a href="https://cchsu.info/">Chih-Chung Hsu</a>,</span>
             <span class="author-block">Xin-Di Ma,</span>
             <span class="author-block">Wo-Ting Liao,</span>
-            <span class="author-block">
-              <a href="https://ming053l.github.io/">Chia-Ming Lee</a>
-            </span>
+            <span class="author-block"><a href="https://ming053l.github.io/">Chia-Ming Lee</a></span>
           </div>
-
           <div class="is-size-5 publication-authors">
             <span class="author-block">National Yang Ming Chiao Tung University</span>
           </div>
-
           <h1 style="font-size:24px;font-weight:bold; margin-top: 10px;">CVPR Findings 2026</h1>
-
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
@@ -98,29 +101,82 @@
         <source src="./static/videos/ELSATeaserLightNoTitle_.mp4" type="video/mp4">
       </video>
       <h2 class="subtitle has-text-centered" style="margin-top: 15px;">
-        <strong>Quick Highlights:</strong> ELSA achieves exact attention semantics with $O(\log n)$ parallel depth, enabling fast and memory-efficient inference on diverse GPU platforms.
+        ELSA reformulates online softmax as an associative monoid prefix scan [cite: 1742], reducing depth to $O(\log n)$ [cite: 1719] and providing a provable FP32 relative error bound[cite: 1718].
       </h2>
     </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section" id="abstract">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Existing attention accelerators often trade exact softmax semantics, depend on fused Tensor Core kernels, or suffer from sequential depth that limits FP32 throughput on long sequences. We present <strong>ELSA</strong>, an algorithmic reformulation of softmax attention that:
+            Existing attention accelerators often trade exact softmax semantics or suffer from sequential depth that limits FP32 throughput on long sequences[cite: 1717]. We present <strong>ELSA</strong>, which preserves standard softmax semantics in real arithmetic [cite: 1718] and casts the online softmax update into a prefix scan over an associative monoid of triples $(m, S, W)$[cite: 1719]. ELSA is Tensor-Core independent [cite: 1720] and serves as a drop-in replacement with no retraining required[cite: 1722]. It achieves $O(n)$ extra memory and $O(\log n)$ parallel depth [cite: 1719], improving FP32 inference latency over memory-efficient SDPA by 1.3–3.5x[cite: 1722, 1753].
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="method">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Method: Monoid Reformulation</h2>
+        <div class="content has-text-justified">
+          <p>
+            The core of ELSA is reformulating the inherently sequential online softmax recurrence into a parallelizable prefix scan[cite: 1832, 1834]. We define the attention state as a triple $(m, S, W)$ where $m$ is the running maximum, $S$ is the normalized sum, and $W$ is the weighted sum[cite: 1792, 1805].
+          </p>
+          <p>
+            We prove these states form an <strong>associative monoid</strong> under the merge operator $\oplus$[cite: 1750, 1833]:
+            $$u_a \oplus u_b = \text{renorm}(\max(m_a, m_b), \text{un}(u_a) + \text{un}(u_b))$$
+            This allows us to implement a two-level parallel scan: intra-block Hillis-Steele and inter-block Blelloch[cite: 1721, 1823, 1854].
+          </p>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="results">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Experimental Benchmarks</h2>
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="content has-text-justified">
+          <p>
+            ELSA was evaluated on NVIDIA A100 (40GB) and Jetson TX2 across various vision and language tasks[cite: 1889, 1897].
           </p>
           <ul>
-            <li><strong>Preserves Exactness:</strong> Maintains standard softmax semantics in real arithmetic and provides a provable FP32 relative error bound.</li>
-            <li><strong>Parallelizes Online Softmax:</strong> Casts the update into a prefix scan over an associative monoid of triples $(m, S, W)$, yielding $O(n)$ extra memory and $O(\log n)$ parallel depth.</li>
-            <li><strong>Hardware-Agnostic:</strong> Independent of Tensor Cores and implemented in Triton and CUDA C++ for high-throughput inference across platforms, from A100 GPUs to Jetson TX2.</li>
+            <li><strong>FP32 Latency:</strong> ELSA achieves 1.3x speedup at 1K tokens, 3.1x at 4K, and 3.5x at 16K tokens vs. memory-efficient SDPA[cite: 1736, 1753, 2004, 2005].</li>
+            <li><strong>Memory Efficiency:</strong> Uses significantly lower peak memory in FP16 compared to FlashAttention-2/3 at 16K tokens (0.19 GB vs. 0.29/0.36 GB)[cite: 1754].</li>
+            <li><strong>Exactness:</strong> Verified via drift metrics showing near-machine-precision agreement ($||\delta P||_{\infty} \approx 3.12 \times 10^{-17}$)[cite: 2290, 2291].</li>
           </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="deployment">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Real-World Deployment</h2>
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="content has-text-justified">
           <p>
-            ELSA improves FP32 inference latency over memory-efficient SDPA by 1.3–3.5x while remaining a drop-in replacement with no retraining required.
+            ELSA is a drop-in replacement for foundation models including <strong>CLIP</strong>, <strong>SAM</strong>, and <strong>ViT</strong>[cite: 1751, 1897].
           </p>
+          <ul>
+            <li><strong>Foundation Models:</strong> Achieves up to 2.15x speedup and 39.6% memory reduction for CLIP ViT-L/14 at high resolutions (560px)[cite: 2361, 2364].</li>
+            <li><strong>3D Vision:</strong> In Visual Geometry-Grounded Transformer (VGGT), ELSA-FP32 yields a 2.34x speedup over xFormers at 150 frames[cite: 2381, 2393].</li>
+            <li><strong>Embedded Systems:</strong> On Jetson TX2, ELSA consistently reduces latency by 1.5–2.0x relative to PyTorch Math kernels[cite: 2117, 2119].</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -131,7 +187,7 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Video Presentation (Voiced)</h2>
+        <h2 class="title is-3">Full Video Presentation</h2>
         <div class="publication-video">
           <video id="promo-full" controls playsinline width="100%">
             <source src="./static/videos/ELSAPromoVoicedLight_2min.mp4" type="video/mp4">
@@ -158,9 +214,7 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="content has-text-centered">
-        <p>
-          This page is modified from the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> template.
-        </p>
+        <p>This page is modified from the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> template.</p>
       </div>
     </div>
   </div>
