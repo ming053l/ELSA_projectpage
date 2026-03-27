@@ -18,9 +18,25 @@
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  
   <link rel="stylesheet" href="./static/css/index.css">
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
 </head>
 <body>
 
@@ -31,7 +47,9 @@
         <div class="column has-text-centered">
           <h1 class="title is-1 publication-title">ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers</h1>
           <div class="is-size-5 publication-authors">
-            <span class="author-block">Chih-Chung Hsu,</span>
+            <span class="author-block">
+              <a href="https://cchsu.info/">Chih-Chung Hsu</a>,
+            </span>
             <span class="author-block">Xin-Di Ma,</span>
             <span class="author-block">Wo-Ting Liao,</span>
             <span class="author-block">
@@ -43,14 +61,20 @@
             <span class="author-block">National Yang Ming Chiao Tung University</span>
           </div>
 
-          <h1 style="font-size:24px;font-weight:bold; margin-top: 10px;">CVPR Findings 2026</h1>
+          <h1 style="font-size:24px;font-weight:bold; margin-top: 10px;">CVPR 2026</h1>
 
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
-                <a href="https://arxiv.org/pdf/2603.11000" class="external-link button is-normal is-rounded is-dark">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fas fa-file-pdf"></i></span>
                   <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2603.11000" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
                 </a>
               </span>
               <span class="link-block">
@@ -70,8 +94,11 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <h2 class="subtitle has-text-centered" style="margin-top: 20px;">
-        <strong>ELSA</strong> reformulates the online softmax recurrence into a parallel prefix scan over an associative monoid of triples $(m, S, W)$[cite: 7, 38]. This reduces parallel depth from $O(n)$ to <strong>$O(log\ n)$</strong> while maintaining $O(n)$ memory and <strong>exact softmax semantics</strong>[cite: 7, 36, 114].
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/ELSAPromoVoicedLight_2min.mp4" type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered" style="margin-top: 15px;">
+        ELSA reformulates online attention as a parallel prefix scan, achieving <strong>$O(\log n)$</strong> parallel depth while remaining hardware-agnostic and retrain-free.
       </h2>
     </div>
   </div>
@@ -84,36 +111,15 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Existing attention accelerators often trade exact softmax semantics, depend on fused Tensor Core kernels, or suffer from sequential depth that limits FP32 throughput on long sequences[cite: 5]. We present <strong>ELSA</strong>, an algorithmic reformulation of softmax attention that:
+            Existing attention accelerators often trade exact softmax semantics, depend on fused Tensor Core kernels, or suffer from sequential depth that limits FP32 throughput on long sequences. We present <strong>ELSA</strong>, an algorithmic reformulation of softmax attention that:
           </p>
           <ul>
-            <li><strong>Preserves exactness:</strong> Maintains standard softmax semantics in real arithmetic and provides a provable FP32 relative error bound[cite: 6].</li>
-            <li><strong>Parallelizes online softmax:</strong> Casts the update into a prefix scan over an associative monoid, yielding $O(n)$ extra memory and $O(log\ n)$ parallel depth[cite: 7].</li>
-            <li><strong>Hardware-agnostic:</strong> Independent of Tensor Cores and implemented in Triton and CUDA C++ for cross-platform efficiency[cite: 8].</li>
+            <li><strong>Preserves Exactness:</strong> Maintains standard softmax semantics in real arithmetic and provides a provable FP32 relative error bound.</li>
+            <li><strong>Parallelizes Online Softmax:</strong> Casts the update into a prefix scan over an associative monoid, yielding $O(n)$ extra memory and $O(\log n)$ parallel depth.</li>
+            <li><strong>Hardware-Agnostic:</strong> Independent of Tensor Cores and implemented in Triton and CUDA C++ for high-throughput inference across platforms, from A100 GPUs to Jetson TX2.</li>
           </ul>
           <p>
-            ELSA improves FP32 inference latency over memory-efficient SDPA by 1.3-3.5x on NVIDIA A100 and Jetson TX2 without requiring retraining[cite: 10, 41].
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3">Key Contributions</h2>
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <div class="content has-text-justified">
-          <p>
-            <strong>Monoid Formulation:</strong> We prove that the online softmax recurrence admits an associative binary operation on state triples $(m, S, W) \in \mathbb{R} \times \mathbb{R} \times \mathbb{R}^{d_v}$[cite: 38]. This ensures numerical stability for million-token sequences with a formal FP32 error bound[cite: 38].
-          </p>
-          <p>
-            <strong>Two-Level Scan Architecture:</strong> We implement a high-throughput two-level scan (intra-block Hillis-Steele and inter-block Blelloch) tailored for softmax attention[cite: 9, 40].
-          </p>
-          <p>
-            <strong>Training-Free Deployment:</strong> ELSA serves as a drop-in replacement for pretrained foundation models like CLIP and SAM, enabling immediate acceleration without fine-tuning[cite: 39, 52].
+            ELSA improves FP32 inference latency over memory-efficient SDPA by 1.3–3.5x while remaining a drop-in replacement with no retraining required.
           </p>
         </div>
       </div>
