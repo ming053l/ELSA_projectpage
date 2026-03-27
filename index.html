@@ -94,11 +94,11 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <video id="teaser" autoplay muted loop playsinline height="100%">
-        <source src="./static/videos/ELSAPromoVoicedLight_2min.mp4" type="video/mp4">
+      <video id="teaser-short" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/ELSATeaserLightNoTitle_.mp4" type="video/mp4">
       </video>
       <h2 class="subtitle has-text-centered" style="margin-top: 15px;">
-        ELSA reformulates online attention as a parallel prefix scan, achieving <strong>$O(\log n)$</strong> parallel depth while remaining hardware-agnostic and retrain-free.
+        <strong>Quick Highlights:</strong> ELSA achieves exact attention semantics with $O(\log n)$ parallel depth, enabling fast and memory-efficient inference on diverse GPU platforms.
       </h2>
     </div>
   </div>
@@ -115,12 +115,27 @@
           </p>
           <ul>
             <li><strong>Preserves Exactness:</strong> Maintains standard softmax semantics in real arithmetic and provides a provable FP32 relative error bound.</li>
-            <li><strong>Parallelizes Online Softmax:</strong> Casts the update into a prefix scan over an associative monoid, yielding $O(n)$ extra memory and $O(\log n)$ parallel depth.</li>
+            <li><strong>Parallelizes Online Softmax:</strong> Casts the update into a prefix scan over an associative monoid of triples $(m, S, W)$, yielding $O(n)$ extra memory and $O(\log n)$ parallel depth.</li>
             <li><strong>Hardware-Agnostic:</strong> Independent of Tensor Cores and implemented in Triton and CUDA C++ for high-throughput inference across platforms, from A100 GPUs to Jetson TX2.</li>
           </ul>
           <p>
             ELSA improves FP32 inference latency over memory-efficient SDPA by 1.3–3.5x while remaining a drop-in replacement with no retraining required.
           </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video Presentation (Voiced)</h2>
+        <div class="publication-video">
+          <video id="promo-full" controls playsinline width="100%">
+            <source src="./static/videos/ELSAPromoVoicedLight_2min.mp4" type="video/mp4">
+          </video>
         </div>
       </div>
     </div>
@@ -133,7 +148,7 @@
     <pre><code>@inproceedings{hsu2026elsa,
   title={ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers},
   author={Hsu, Chih-Chung and Ma, Xin-Di and Liao, Wo-Ting and Lee, Chia-Ming},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Findings},
   year={2026}
 }</code></pre>
   </div>
