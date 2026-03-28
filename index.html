@@ -18,20 +18,14 @@
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  
   <link rel="stylesheet" href="./static/css/index.css">
-  
+
   <script>
     window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      },
-      svg: {
-        fontCache: 'global'
-      }
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
     };
   </script>
   <script type="text/javascript" id="MathJax-script" async
@@ -39,6 +33,7 @@
   </script>
 
   <style>
+    /* ── TL;DR box ── */
     .tldr-box {
       background-color: #f9f9f9;
       border-left: 8px solid #00d1b2;
@@ -46,10 +41,14 @@
       margin-top: 2rem;
       border-radius: 0 4px 4px 0;
     }
+
+    /* ── Navbar ── */
     .nav-center {
       justify-content: center;
       flex-grow: 1;
     }
+
+    /* ── Hero sub-line ── */
     .promo-slogan {
       font-size: 1.25rem;
       font-weight: 500;
@@ -57,6 +56,8 @@
       margin-top: 5px;
       font-style: italic;
     }
+
+    /* ── Motivation figure ── */
     .motivation-img {
       max-width: 800px;
       margin: 20px auto;
@@ -64,10 +65,29 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+
+    /* ── Motivation video ── */
+    .motivation-video-wrap {
+      max-width: 860px;
+      margin: 2rem auto;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+    }
+    .motivation-video-wrap video {
+      width: 100%;
+      display: block;
+    }
+
+    /* ── Method bullet list ── */
+    .method-list li {
+      margin-bottom: 0.6rem;
+    }
   </style>
 </head>
 <body>
 
+<!-- ══ Navbar ══════════════════════════════════════════════════════════════ -->
 <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
   <div class="navbar-menu">
     <div class="navbar-start nav-center">
@@ -79,12 +99,17 @@
   </div>
 </nav>
 
+<!-- ══ Hero ════════════════════════════════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-body">
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers</h1>
+
+          <h1 class="title is-1 publication-title">
+            ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers
+          </h1>
+
           <div class="is-size-5 publication-authors">
             <span class="author-block">
               <a href="https://cchsu.info/">Chih-Chung Hsu</a>,
@@ -100,7 +125,7 @@
             <span class="author-block">National Yang Ming Chiao Tung University</span>
           </div>
 
-          <h1 style="font-size:24px;font-weight:bold; margin-top: 10px;">CVPR Findings 2026</h1>
+          <h1 style="font-size:24px; font-weight:bold; margin-top:10px;">CVPR Findings 2026</h1>
           <p class="promo-slogan">Can't use FA on your device? Try ELSA on!</p>
 
           <div class="column has-text-centered">
@@ -112,42 +137,53 @@
                 </a>
               </span>
               <span class="link-block">
-                <a href="https://arxiv.org/abs/2603.11000" class="external-link button is-normal is-rounded is-dark">
+                <a href="https://arxiv.org/abs/2603.11000"
+                   class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="ai ai-arxiv"></i></span>
                   <span>arXiv</span>
                 </a>
               </span>
               <span class="link-block">
-                <a href="https://github.com/ming053l/ELSA" class="external-link button is-normal is-rounded is-dark">
+                <a href="https://github.com/ming053l/ELSA"
+                   class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fab fa-github"></i></span>
                   <span>Code</span>
                 </a>
               </span>
             </div>
           </div>
+
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ══ Teaser ══════════════════════════════════════════════════════════════ -->
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
       <video id="teaser-short" autoplay muted loop playsinline height="100%">
         <source src="./static/videos/ELSATeaserLightNoTitle_.mp4" type="video/mp4">
       </video>
-      
+
       <div class="tldr-box">
         <h2 class="title is-4">TL;DR</h2>
         <div class="content is-size-5">
-          Standard attention is slow, and <strong>FlashAttention (FA) is strictly bound to specialized hardware</strong> (Tensor Cores). <strong>ELSA</strong> breaks this limitation by turning attention into a "Parallel Scan" problem. It achieves <strong>O(log n) parallel depth</strong> and <strong>O(n) memory</strong> on <strong>any hardware</strong>—from data-center GPUs to embedded devices—without losing precision or requiring <strong>zero retraining</strong>. Drop it into CLIP or SAM and get up to <strong>3.5x speedup</strong> on FP32.
+          Standard attention is slow in FP32, and <strong>FlashAttention is strictly bound to
+          specialized hardware</strong> (Tensor Cores). <strong>ELSA</strong> breaks this limitation
+          by recasting attention as a <em>parallel prefix scan</em> over an associative monoid.
+          It achieves <strong>O(log&nbsp;n) parallel depth</strong> and <strong>O(n) memory</strong>
+          on <strong>any hardware</strong>—from data-center GPUs to embedded devices—without
+          sacrificing precision or requiring <strong>any retraining</strong>. Drop it into CLIP
+          or SAM and get up to <strong>3.5&times; FP32 speedup</strong> over ME-SDPA.
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ══ Abstract ════════════════════════════════════════════════════════════ -->
 <section class="section" id="abstract">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
@@ -155,7 +191,14 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Existing attention accelerators often trade exact softmax semantics or suffer from sequential depth that limits throughput. We present <strong>ELSA</strong>, an algorithmic reformulation of softmax attention that preserves exact semantics in real arithmetic. By casting the online softmax update into a prefix scan over an associative monoid of triples $(m, S, W)$, ELSA achieves $O(n)$ extra memory and $O(\log n)$ parallel depth. Implemented in Triton and CUDA C++, it improves FP32 inference latency over memory-efficient SDPA by 1.3–3.5x as a drop-in replacement with no retraining required.
+            Existing attention accelerators often trade exact softmax semantics or suffer from
+            sequential depth that limits throughput on long sequences. We present <strong>ELSA</strong>,
+            an algorithmic reformulation of softmax attention that preserves exact semantics in real
+            arithmetic. By casting the online softmax update into a prefix scan over an associative
+            monoid of triples $(m, S, W)$, ELSA achieves $O(n)$ extra memory and $O(\log n)$ parallel
+            depth. Implemented in Triton and CUDA C++ without Tensor Core dependencies, it improves
+            FP32 inference latency over memory-efficient SDPA by <strong>1.3–3.5&times;</strong> as a
+            drop-in replacement, with no retraining required.
           </p>
         </div>
       </div>
@@ -163,86 +206,172 @@
   </div>
 </section>
 
+<!-- ══ Motivation ══════════════════════════════════════════════════════════ -->
 <section class="section" id="motivation">
   <div class="container is-max-desktop">
-    <h2 class="title is-3">Motivation: Breaking the Sequential Chain</h2>
+    <h2 class="title is-3">Motivation</h2>
     <div class="content has-text-justified">
       <p>
-        Classical image processing utilizes <strong>Integral Images</strong> to optimize regional sums into constant time. However, standard Softmax Attention remains trapped in a <strong>Sequential Recurrence</strong> because exponential scaling and normalization terms are mutually dependent across tokens.
+        The key insight behind ELSA comes from an analogy with classical image processing.
+        A <strong>Summed-Area Table (SAT)</strong>—also known as an integral image—lets you
+        compute the sum of any rectangular region in <em>constant time</em>, regardless of its
+        size, by a single-pass precomputation. The animation below contrasts brute-force box
+        filtering (recomputing every neighborhood from scratch) with the SAT approach (build
+        once, query instantly):
+      </p>
+
+      <!-- Integral image demo video -->
+      <div class="motivation-video-wrap">
+        <video autoplay muted loop playsinline>
+          <source src="./static/videos/integral_fill.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <p>
+        Softmax attention faces an analogous bottleneck. The standard online recurrence of
+        Rabe &amp; Staats compresses the $O(n^2)$ attention matrix to $O(n)$ memory, but at
+        the cost of <strong>strict sequentiality</strong>: each token update depends on all
+        previous ones, forcing $O(n)$ synchronization steps. ELSA resolves this by showing
+        that the attention state $(m, S, W)$ satisfies the same <em>composability</em> property
+        as prefix sums—enabling a fully parallel reduction with $O(\log n)$ depth.
       </p>
 
       <figure class="image">
-        <img src="./static/images/ELSA_IntegralImage.png" alt="Integral Image vs Sequential Attention" class="motivation-img">
+        <img src="./static/images/ELSA_IntegralImage.png"
+             alt="Integral Image analogy for ELSA"
+             class="motivation-img">
       </figure>
-
-      <p>
-        While accelerators like <strong>FlashAttention</strong> reduce memory, they are strictly hardware-bound to Tensor Core fusion (HMMA/GMMA). On older GPUs, AMD devices, or embedded systems like <strong>Jetson TX2</strong>, these advantages disappear. ELSA breaks this chain by:
-      </p>
-      <ul>
-        <li><strong>Algorithmic Parallelization:</strong> We treat the attention state as a one-dimensional analogue of integral images, allowing us to merge partial sums in parallel.</li>
-        <li><strong>Hardware Agnosticism:</strong> By using an associative monoid scan, ELSA removes the dependency on specialized hardware instructions, enabling high-performance FP32 inference across all platforms.</li>
-        <li><strong>Precision Integrity:</strong> Unlike Linear Attention variants that approximate the operator, ELSA is <strong>exact</strong>, maintaining full token-to-token interactions without retraining foundation models.</li>
-      </ul>
     </div>
   </div>
 </section>
 
+<!-- ══ Method ══════════════════════════════════════════════════════════════ -->
 <section class="section" id="method">
   <div class="container is-max-desktop">
     <h2 class="title is-3">Method: Parallel Monoid Scan</h2>
     <div class="content has-text-justified">
+
       <p>
-        ELSA transforms the sequential online softmax recurrence into a fully parallelizable computation by proving that attention states $(m, S, W)$ form an associative monoid. 
+        ELSA transforms the sequential online softmax recurrence into a fully parallelizable
+        computation by proving that attention states $(m, S, W)$ form an
+        <strong>associative monoid</strong> under a merge operator $\oplus$. This algebraic
+        structure is precisely what enables standard parallel-scan primitives—analogous to
+        how prefix sums unlock $O(1)$ range queries in integral images—without any
+        approximation or hardware-specific instructions.
+      </p>
+
+      <h3 class="title is-5" style="margin-top: 1.5rem;">From Sequential Recurrence to Parallel Scan</h3>
+      <p>
+        Classical memory-efficient attention (ME-SDPA) chains tokens one by one: each step
+        depends on the previous running maximum $m_j$, forcing $O(n)$ sequential depth.
+        On a GPU with one million tokens, this means one million synchronization barriers—leaving
+        the vast majority of threads idle. ELSA breaks this chain by observing that any two
+        contiguous blocks of attention states can be <em>merged exactly</em> via:
+      </p>
+      <p style="text-align:center;">
+        $u_A \oplus u_B = \mathrm{renorm}\!\left(\max(m_A, m_B),\; \tilde{S}_A + \tilde{S}_B,\; \tilde{W}_A + \tilde{W}_B\right)$
       </p>
       <p>
-        We utilize a two-level scan architecture: intra-block <strong>Hillis-Steele</strong> and inter-block <strong>Blelloch</strong>. This reduces the critical path to $O(\log n)$, providing a high-throughput solution for diverse platforms where traditional hardware fusion is not applicable.
+        Because $\oplus$ is associative (with identity $e = (-\infty, 0, \mathbf{0})$),
+        blocks can be reduced independently in parallel and combined in a logarithmic
+        reduction tree—exactly as prefix sums compose corner values in a SAT.
       </p>
+
+      <h3 class="title is-5" style="margin-top: 1.5rem;">Two-Level GPU Scan</h3>
+      <p>
+        We map this monoid to a two-level scan architecture tailored to the GPU memory hierarchy:
+      </p>
+      <ul class="method-list">
+        <li>
+          <strong>Intra-block (Hillis–Steele):</strong> Each thread block independently reduces
+          128 tokens in shared memory using a tree scan. All threads remain active throughout,
+          maximizing shared-memory bandwidth.
+        </li>
+        <li>
+          <strong>Inter-block (Blelloch):</strong> A work-optimal two-pass scan aggregates
+          block-level states in global memory, adding only $2\lceil\log_2(n/B)\rceil$ merge
+          levels. The identity element $e$ allows the down-sweep to initialize boundary states
+          without special-casing.
+        </li>
+      </ul>
+      <p>
+        The total scan depth is $L(n, B) = \lceil\log_2 B\rceil + 2\lceil\log_2(n/B)\rceil + 3
+        \leq 2\lceil\log_2 n\rceil + 3$, yielding a provable FP32 relative error bound of
+        $O(u \log n)$—logarithmic growth versus the $O(nu)$ of sequential recurrence.
+      </p>
+
+      <h3 class="title is-5" style="margin-top: 1.5rem;">Key Design Properties</h3>
+      <ul class="method-list">
+        <li>
+          <strong>Algorithmic Parallelization:</strong> The attention state is treated as a
+          one-dimensional analogue of an integral image, enabling partial sums to be merged
+          in parallel rather than accumulated sequentially.
+        </li>
+        <li>
+          <strong>Hardware Agnosticism:</strong> $\oplus$ requires only scalar
+          <code>max</code>/<code>exp</code> and vector <code>fma</code>—no
+          HMMA/GMMA Tensor Core instructions. ELSA runs identically on A100s,
+          older AMD devices, and embedded systems such as the Jetson TX2.
+        </li>
+        <li>
+          <strong>Exact Precision:</strong> Unlike linear-attention variants that approximate
+          the softmax operator, ELSA preserves full token-to-token interactions in real
+          arithmetic, making it a true drop-in replacement for pretrained models such as
+          CLIP and SAM with zero retraining.
+        </li>
+      </ul>
+
     </div>
   </div>
 </section>
 
+<!-- ══ Benchmarks ══════════════════════════════════════════════════════════ -->
 <section class="section" id="benchmarks">
   <div class="container is-max-desktop">
     <h2 class="title is-3">Performance Benchmarks</h2>
     <div class="content">
       <p>
-        Evaluations on NVIDIA A100 show that ELSA's throughput gains scale significantly as sequences grow.
+        All benchmarks are conducted on a single NVIDIA A100 (40 GB), averaged over 200 runs.
+        ELSA's throughput advantage over ME-SDPA widens significantly with sequence length,
+        reflecting the growing penalty of $O(n)$ sequential depth at scale.
       </p>
       <table class="table is-fullwidth is-striped">
         <thead>
           <tr>
-            <th>Sequence Length (Tokens)</th>
-            <th>FP32 Speedup (vs. ME-SDPA)</th>
+            <th>Sequence Length (tokens)</th>
+            <th>FP32 Speedup vs. ME-SDPA</th>
             <th>Peak Memory (FP32)</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>1,024</td><td>1.3x</td><td>0.11 GB</td></tr>
-          <tr><td>4,096</td><td>3.1x</td><td>0.15 GB</td></tr>
-          <tr><td>16,384</td><td>3.5x</td><td>0.34 GB</td></tr>
+          <tr><td>1,024</td><td>1.3&times;</td><td>0.11 GB</td></tr>
+          <tr><td>4,096</td><td>3.1&times;</td><td>0.15 GB</td></tr>
+          <tr><td>16,384</td><td>3.5&times;</td><td>0.34 GB</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </section>
 
+<!-- ══ BibTeX ══════════════════════════════════════════════════════════════ -->
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
     <pre><code>@inproceedings{hsu2026elsa,
-  title={ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers},
-  author={Hsu, Chih-Chung and Ma, Xin-Di and Liao, Wo-Ting and Lee, Chia-Ming},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Findings},
-  year={2026}
+  title     = {ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers},
+  author    = {Hsu, Chih-Chung and Ma, Xin-Di and Liao, Wo-Ting and Lee, Chia-Ming},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Findings},
+  year      = {2026}
 }</code></pre>
   </div>
 </section>
 
+<!-- ══ Footer ══════════════════════════════════════════════════════════════ -->
 <footer class="footer">
   <div class="container">
     <div class="columns is-centered">
       <div class="content has-text-centered">
-        <p>This page is modified from the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> template.</p>
+        <p>This page is built upon the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> template.</p>
       </div>
     </div>
   </div>
