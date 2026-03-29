@@ -277,9 +277,12 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <video id="teaser-short" autoplay muted loop playsinline height="100%">
-        <source src="./static/videos/ELSATeaserLightNoTitle_.mp4" type="video/mp4">
-      </video>
+      <div style="max-width:680px; margin:0 auto;">
+        <video id="teaser-short" autoplay muted loop playsinline
+               style="width:100%; display:block; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.12);">
+          <source src="./static/videos/ELSATeaserLightNoTitle_.mp4" type="video/mp4">
+        </video>
+      </div>
 
       <!-- ═══ CORRECTED TL;DR ═══ -->
       <div class="tldr-box">
@@ -555,6 +558,22 @@
         \leq 2\lceil\log_2 n\rceil + 3$, with a provable FP32 relative error of
         $O(u \log n)$.
       </p>
+
+      <h3 class="title is-5" style="margin-top:2rem;">GPU Memory Hierarchy — Token Movement</h3>
+      <p>
+        The animation below visualises how ELSA moves tokens through the GPU memory hierarchy
+        compared to ME-SDPA (xFormers FP32). Left: ME-SDPA loads one tile at a time
+        sequentially (<em>O(n) depth</em>). Right: ELSA loads 64 tiles in parallel across
+        8 SRAM blocks, runs Hillis–Steele intra-block scans (log&#x2082;8&thinsp;=&thinsp;3&thinsp;levels),
+        then a Blelloch inter-block sweep—achieving <em>O(log n) = 6 steps</em> with no
+        Tensor Core dependency.
+      </p>
+      <div class="motivation-video-wrap" style="max-width:100%;">
+        <video autoplay muted loop playsinline>
+          <source src="./static/videos/token_move_64.mp4" type="video/mp4">
+        </video>
+      </div>
+
     </div>
   </div>
 </section>
