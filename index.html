@@ -218,6 +218,7 @@
   <div class="navbar-menu">
     <div class="navbar-start nav-center">
       <a class="navbar-item" href="#abstract">Abstract</a>
+      <a class="navbar-item" href="#introduction">Introduction</a>
       <a class="navbar-item" href="#motivation">Motivation</a>
       <a class="navbar-item" href="#method">Method</a>
       <a class="navbar-item" href="#benchmarks">Benchmarks</a>
@@ -326,6 +327,167 @@
     </div>
   </div>
 </section>
+
+<!-- ══ Introduction ═════════════════════════════════════════════════════════ -->
+<section class="section" id="introduction">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Introduction</h2>
+    <div class="content has-text-justified">
+
+      <p>
+        Vision Transformers have become the backbone of modern perception systems—from satellite
+        imagery and medical diagnostics to autonomous driving and robot navigation. But as these
+        models get deployed in the real world, a hard constraint emerges: <strong>not every device
+        has a data-centre GPU.</strong>
+      </p>
+
+      <!-- scenario cards -->
+      <div class="intro-cards">
+
+        <div class="intro-card">
+          <div class="intro-card-icon">🤖</div>
+          <div class="intro-card-body">
+            <h4>Robotics &amp; Autonomous Systems</h4>
+            <p>
+              Platforms like NVIDIA Jetson AGX Orin and Drive AGX run perception stacks
+              in real time with tight power and VRAM budgets. Materialising the full
+              O(n²) attention matrix is simply not an option, and FlashAttention's
+              Tensor Core dependency (HMMA/GMMA) makes it unavailable on many
+              embedded GPUs (e.g. Jetson TX2, compute capability 6.2).
+              ME-SDPA preserves memory but processes tokens <em>sequentially</em>—
+              leaving the majority of CUDA threads idle and burning latency budget.
+            </p>
+          </div>
+        </div>
+
+        <div class="intro-card">
+          <div class="intro-card-icon">🏥</div>
+          <div class="intro-card-body">
+            <h4>High-Precision Domains (Medical, Hyperspectral)</h4>
+            <p>
+              Clinical imaging, hyperspectral sensors (12–16-bit dynamic range), and
+              scientific microscopy demand <strong>FP32 exactness</strong>—
+              half-precision accumulation is clinically inadmissible.
+              FlashAttention's FP32 fallback reverts to untuned SIMD without fused
+              HMMA kernels, losing its throughput advantage entirely.
+              ME-SDPA supports FP32 but is up to <strong>3.5× slower than ELSA</strong>
+              at 16K tokens.
+            </p>
+          </div>
+        </div>
+
+        <div class="intro-card">
+          <div class="intro-card-icon">🌐</div>
+          <div class="intro-card-body">
+            <h4>Foundation Models on Constrained Hardware</h4>
+            <p>
+              Re-training CLIP, SAM, VGGT, or LLaMA to compensate for approximate
+              attention costs millions of GPU-hours. Yet standard exact attention
+              OOMs at long sequences, and FlashAttention requires Ampere/Hopper
+              Tensor Cores unavailable on older, AMD, or edge hardware.
+              There is no hardware-agnostic, exact, high-throughput drop-in for
+              FP32 inference—<strong>until ELSA.</strong>
+            </p>
+          </div>
+        </div>
+
+      </div><!-- /intro-cards -->
+
+      <!-- gap summary table -->
+      <h3 class="title is-5" style="margin-top:2rem;">Why Existing Solutions Fall Short</h3>
+      <div class="itab-wrapper" style="margin-bottom:0;">
+        <div class="itab-scroll">
+          <table class="itab">
+            <thead>
+              <tr>
+                <th>Approach</th>
+                <th>Exact FP32</th>
+                <th>No Tensor Cores needed</th>
+                <th>Parallel (O(log n) depth)</th>
+                <th>Retrain-free</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Standard SDPA (Math)</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td class="worst">✗ O(n²) memory</td>
+                <td>✓</td>
+                <td class="worst">OOM at long sequences</td>
+              </tr>
+              <tr>
+                <td>ME-SDPA (xFormers)</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td class="worst">✗ O(n/Tₖ) sequential depth</td>
+                <td>✓</td>
+                <td class="worst">3.5× slower than ELSA at 16K</td>
+              </tr>
+              <tr>
+                <td>FlashAttention-2/3</td>
+                <td class="worst">✗ FP32 path uncompetitive</td>
+                <td class="worst">✗ Requires HMMA/GMMA</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td class="worst">Unavailable on edge / AMD / older GPUs</td>
+              </tr>
+              <tr>
+                <td>Linear / Approximate Attention</td>
+                <td class="worst">✗ Modifies softmax</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td class="worst">✗ Requires retraining</td>
+                <td class="worst">Impractical for foundation models</td>
+              </tr>
+              <tr style="background: var(--teal-light);">
+                <td><strong>ELSA (Ours)</strong></td>
+                <td class="best">✓ Provable O(u log n)</td>
+                <td class="best">✓ Scalar max/exp + fma only</td>
+                <td class="best">✓ O(log n) depth</td>
+                <td class="best">✓ Drop-in, zero retraining</td>
+                <td class="best"><strong>Fills the gap</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ── intro scenario cards ── */
+  .intro-cards {
+    display: flex; flex-direction: column; gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .intro-card {
+    display: flex; gap: 1rem; align-items: flex-start;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--teal);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem;
+    box-shadow: var(--shadow);
+    transition: box-shadow .2s;
+  }
+  .intro-card:hover { box-shadow: 0 4px 20px rgba(0,191,165,.15); }
+  .intro-card-icon {
+    font-size: 1.8rem; flex: 0 0 auto;
+    line-height: 1; margin-top: .1rem;
+  }
+  .intro-card-body h4 {
+    font-size: .95rem; font-weight: 700;
+    color: var(--text); margin: 0 0 .35rem;
+  }
+  .intro-card-body p {
+    font-size: .875rem; color: var(--text-soft);
+    margin: 0; line-height: 1.6;
+  }
+</style>
 
 <!-- ══ Motivation ══════════════════════════════════════════════════════════ -->
 <section class="section" id="motivation">
