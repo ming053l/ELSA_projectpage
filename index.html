@@ -291,9 +291,10 @@
           <br><br>
           On <strong>A100 (FP32)</strong>, ELSA delivers up to
           <strong>3.5&times; speedup over ME-SDPA</strong> at 16K tokens.
-          On <strong>CLIP ViT-L/14</strong> (full image encoder, FP32),
-          ELSA reduces inference latency by <strong>3.7%</strong> with no memory overhead
-          as a drop-in replacement—no retraining, no precision loss.
+          On <strong>CLIP ViT-L/14</strong> (strict FP32), ELSA reduces full image-encoder
+          latency by <strong>3.7%</strong> as a drop-in replacement—no retraining, no precision loss.
+          At the attention-module level, speedup reaches <strong>1.54–2.15×</strong> depending
+          on resolution; gains are partially amortized in the full pipeline by non-attention compute.
           On <strong>Jetson TX2</strong> (edge device),
           ELSA achieves a consistent <strong>~1.6&times; speedup</strong> over the Math kernel
           across all sequence lengths tested (64–900 tokens).
