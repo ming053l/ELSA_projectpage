@@ -221,6 +221,8 @@
       <a class="navbar-item" href="#introduction">Introduction</a>
       <a class="navbar-item" href="#motivation">Motivation</a>
       <a class="navbar-item" href="#method">Method</a>
+      <a class="navbar-item" href="#exactness">Exactness</a>
+      <a class="navbar-item" href="#variants">Variants</a>
       <a class="navbar-item" href="#benchmarks">Benchmarks</a>
     </div>
   </div>
@@ -779,6 +781,326 @@ out = model(**long_input)</pre>
   });
 })();
 </script>
+
+<!-- ══ Exactness Guarantee (Supp C) ══════════════════════════════════════ -->
+<section class="section" id="exactness">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Exactness Guarantee</h2>
+    <p class="has-text-justified has-text-grey" style="margin-bottom:1.5rem;">
+      A parallel scan only helps if it produces the same answer as sequential attention.
+      We verify this empirically against a <strong>float64 oracle</strong> across three scenarios
+      (regular, long, stress) and six complementary drift metrics.
+    </p>
+
+    <!-- metric cards -->
+    <div class="exact-grid">
+
+      <div class="exact-card exact-card--highlight">
+        <div class="exact-val">0</div>
+        <div class="exact-label">Argmax Disagreement Rate</div>
+        <div class="exact-sub">Top-attended token identical to float64 oracle in <em>every</em> scenario — the most behaviorally critical metric</div>
+      </div>
+
+      <div class="exact-card">
+        <div class="exact-val">3.3×10⁻¹⁶</div>
+        <div class="exact-label">Max Probability Drift ‖δP‖∞ (p95, stress)</div>
+        <div class="exact-sub">Orders of magnitude below FP32 unit roundoff u ≈ 6×10⁻⁸</div>
+      </div>
+
+      <div class="exact-card">
+        <div class="exact-val">4.9×10⁻¹⁵</div>
+        <div class="exact-label">Relative L2 Output Error ‖δY‖₂/‖Y‖₂ (p95, stress)</div>
+        <div class="exact-sub">Negligible even under adversarial stress inputs at long sequences</div>
+      </div>
+
+      <div class="exact-card">
+        <div class="exact-val">O(u log n)</div>
+        <div class="exact-label">Provable FP32 Error Bound (Theorem 1)</div>
+        <div class="exact-sub">Logarithmic growth vs O(nu) sequential recurrence — numerically safer at scale</div>
+      </div>
+
+    </div>
+
+    <!-- drift table -->
+    <h3 class="title is-5" style="margin-top:2rem;">95th-Percentile Drift vs. float64 Oracle</h3>
+    <p class="has-text-grey is-size-7" style="margin-bottom:.8rem;">
+      Regular: n=1024, d=64 · Long: n=8192 · Stress: adversarial logits, n=4096.
+      All values well below single-precision unit roundoff u ≈ 6×10⁻⁸.
+    </p>
+    <div class="itab-wrapper" style="margin-bottom:0;">
+      <div class="itab-scroll">
+        <table class="itab">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Regular</th>
+              <th>Long</th>
+              <th>Stress</th>
+              <th>Interpretation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>‖δP‖∞ (max abs prob drift)</td>
+              <td class="best">3.12×10⁻¹⁷</td>
+              <td class="best">2.34×10⁻¹⁷</td>
+              <td class="best">3.33×10⁻¹⁶</td>
+              <td>Worst-case pointwise attention weight error</td>
+            </tr>
+            <tr>
+              <td>‖δP‖₂/‖P‖₂ (rel. L2 prob)</td>
+              <td class="best">1.73×10⁻¹⁵</td>
+              <td class="best">3.42×10⁻¹⁵</td>
+              <td class="best">3.50×10⁻¹⁵</td>
+              <td>Global distributional shift across all attention weights</td>
+            </tr>
+            <tr>
+              <td>JS Divergence (per-row)</td>
+              <td class="best">3.56×10⁻¹⁶</td>
+              <td class="best">3.77×10⁻¹⁶</td>
+              <td class="best">3.07×10⁻¹⁶</td>
+              <td>Per-query attention distribution shape preserved</td>
+            </tr>
+            <tr style="background:var(--teal-light);">
+              <td><strong>Argmax Disagreement Rate</strong></td>
+              <td class="best"><strong>0</strong></td>
+              <td class="best"><strong>0</strong></td>
+              <td class="best"><strong>0</strong></td>
+              <td><strong>Top-attended token never changes — exact behavioral equivalence</strong></td>
+            </tr>
+            <tr>
+              <td>‖δY‖∞ (max abs output drift)</td>
+              <td class="best">4.99×10⁻¹⁶</td>
+              <td class="best">4.99×10⁻¹⁶</td>
+              <td class="best">3.28×10⁻¹⁵</td>
+              <td>Worst-case error in output embeddings to next layer</td>
+            </tr>
+            <tr>
+              <td>‖δY‖₂/‖Y‖₂ (rel. L2 output)</td>
+              <td class="best">2.39×10⁻¹⁵</td>
+              <td class="best">4.72×10⁻¹⁵</td>
+              <td class="best">4.94×10⁻¹⁵</td>
+              <td>Normalized aggregate output error across full tensor</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stat-chips">
+        <span class="stat-chip">All metrics at float64-oracle level — indistinguishable from exact arithmetic</span>
+        <span class="stat-chip">Blockwise monoid validation: per-block drift identical to global result (Figure 7 in paper)</span>
+        <span class="stat-chip">Error grows O(log n) not O(n) — safer than sequential recurrence at scale</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ ELSA Variants (Supp I) ════════════════════════════════════════════ -->
+<section class="section" id="variants">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">ELSA Variants — Pick Your Operating Point</h2>
+    <p class="has-text-justified has-text-grey" style="margin-bottom:1.5rem;">
+      ELSA exposes three precision modes, spanning a continuum from
+      <strong>maximum throughput</strong> to <strong>minimal VRAM</strong>.
+      All variants are drop-in replaceable; select based on your hardware constraints.
+    </p>
+
+    <!-- variant cards -->
+    <div class="variant-grid">
+
+      <div class="variant-card">
+        <div class="variant-header" style="background:#00897b;">
+          <span class="variant-name">ELSA-Strict</span>
+          <span class="variant-tag">FP32</span>
+        </div>
+        <div class="variant-body">
+          <div class="variant-stat"><span class="variant-num">1.36M</span><span class="variant-unit">tok/s</span></div>
+          <div class="variant-mem">0.336 GB peak</div>
+          <div class="variant-desc">Full IEEE-754 FP32 throughout. Provable O(u log n) error bound. <strong>3.4× over ME-SDPA.</strong> Recommended for medical / scientific workloads where numerical auditability matters.</div>
+        </div>
+      </div>
+
+      <div class="variant-card variant-card--featured">
+        <div class="variant-header" style="background:#00bfa5;">
+          <span class="variant-name">ELSA-Turbo</span>
+          <span class="variant-tag">TF32 ★ Default</span>
+        </div>
+        <div class="variant-body">
+          <div class="variant-stat"><span class="variant-num">1.43M</span><span class="variant-unit">tok/s</span></div>
+          <div class="variant-mem">0.288 GB peak — same as ME-SDPA</div>
+          <div class="variant-desc">TF32 accumulation (analogous to PyTorch SDPA default). Numerical error within 10⁻⁴ of strict FP32. <strong>+5% over Strict with no memory penalty.</strong> Used throughout the paper as the headline configuration.</div>
+        </div>
+      </div>
+
+      <div class="variant-card">
+        <div class="variant-header" style="background:#607d8b;">
+          <span class="variant-name">ELSA-Lean</span>
+          <span class="variant-tag">FP32, η=0.25</span>
+        </div>
+        <div class="variant-body">
+          <div class="variant-stat"><span class="variant-num">0.13M</span><span class="variant-unit">tok/s</span></div>
+          <div class="variant-mem">0.288 GB peak — matches ME-SDPA exactly</div>
+          <div class="variant-desc">Streams smaller KV chunks (controlled by η). Trades throughput for minimal VRAM. Best for severely memory-constrained deployments (embedded, consumer GPUs at very long sequences).</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- comparison table at 16K tokens -->
+    <h3 class="title is-5" style="margin-top:2rem;">FP32 Variant Comparison at 16K Tokens (A100)</h3>
+    <div class="itab-wrapper" style="margin-bottom:0;">
+      <div class="itab-scroll">
+        <table class="itab">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Throughput (M tok/s)</th>
+              <th>vs ME-SDPA</th>
+              <th>Peak Memory (GB)</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ME-SDPA (baseline)</td>
+              <td>0.40</td>
+              <td>1.00×</td>
+              <td>0.289</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>ELSA-Strict (FP32)</td>
+              <td class="best">1.36</td>
+              <td class="best">3.40×<span class="badge-speedup">+240%</span></td>
+              <td>0.336</td>
+              <td>Auditable FP32, medical / scientific</td>
+            </tr>
+            <tr style="background:var(--teal-light);">
+              <td><strong>ELSA-Turbo (TF32) ★</strong></td>
+              <td class="best"><strong>1.43</strong></td>
+              <td class="best"><strong>3.58×<span class="badge-speedup">+258%</span></strong></td>
+              <td class="best"><strong>0.288</strong></td>
+              <td><strong>General use — default configuration</strong></td>
+            </tr>
+            <tr>
+              <td>ELSA-Lean (η=0.25)</td>
+              <td>0.13</td>
+              <td>0.33×</td>
+              <td class="best">0.288</td>
+              <td>Minimum VRAM, embedded / consumer GPU</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stat-chips">
+        <span class="stat-chip">ELSA-Turbo: same memory as ME-SDPA, 3.58× the throughput</span>
+        <span class="stat-chip">All variants: exact softmax semantics, no retraining</span>
+        <span class="stat-chip">Switch variant: set <code>backend=</code> in ElsaAttention or env var</span>
+      </div>
+    </div>
+
+    <!-- FP16 note -->
+    <div class="tldr-box" style="margin-top:1.5rem;">
+      <h2 class="title is-6" style="margin-bottom:.4rem;">FP16 Regime (vs FlashAttention)</h2>
+      <div class="content is-size-6">
+        At 16K tokens in FP16: ELSA delivers <strong>2.49M tok/s at 0.19 GB</strong>—the
+        <strong>lowest memory among all exact kernels</strong>.
+        FA2 is ~15% faster (2.88M tok/s) but needs 0.29 GB; FA3 reaches 2.73M tok/s at 0.36 GB.
+        ME-SDPA matches ELSA's 0.19 GB footprint but achieves only 1.47M tok/s.
+        ELSA narrows the speed gap as sequence length grows, while retaining full FP32 capability on the same kernel.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* ── Exactness cards ── */
+  .exact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  @media (max-width: 640px) { .exact-grid { grid-template-columns: 1fr; } }
+  .exact-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--teal-mid);
+  }
+  .exact-card--highlight {
+    border-top-color: var(--teal);
+    background: var(--teal-light);
+  }
+  .exact-val {
+    font-size: 1.6rem; font-weight: 800;
+    color: var(--teal); line-height: 1.1;
+    margin-bottom: .3rem;
+    font-family: 'Castoro', serif;
+  }
+  .exact-card--highlight .exact-val { font-size: 2rem; }
+  .exact-label {
+    font-size: .82rem; font-weight: 700;
+    color: var(--text); margin-bottom: .25rem;
+  }
+  .exact-sub {
+    font-size: .77rem; color: var(--text-soft); line-height: 1.5;
+  }
+
+  /* ── Variant cards ── */
+  .variant-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  @media (max-width: 768px) { .variant-grid { grid-template-columns: 1fr; } }
+  .variant-card {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .variant-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .variant-card--featured {
+    border: 2px solid var(--teal);
+    box-shadow: 0 4px 20px rgba(0,191,165,.2);
+  }
+  .variant-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .7rem 1rem;
+  }
+  .variant-name {
+    font-weight: 800; font-size: .95rem; color: #fff;
+  }
+  .variant-tag {
+    font-size: .7rem; font-weight: 700; color: rgba(255,255,255,.85);
+    background: rgba(0,0,0,.18); border-radius: 10px;
+    padding: .15rem .5rem;
+  }
+  .variant-body { padding: 1rem 1.1rem; background: var(--bg-card); }
+  .variant-stat {
+    display: flex; align-items: baseline; gap: .3rem;
+    margin-bottom: .2rem;
+  }
+  .variant-num {
+    font-size: 1.8rem; font-weight: 800; color: var(--teal);
+    font-family: 'Castoro', serif; line-height: 1;
+  }
+  .variant-unit { font-size: .8rem; color: var(--text-soft); font-weight: 600; }
+  .variant-mem {
+    font-size: .78rem; color: var(--text-soft);
+    margin-bottom: .6rem; font-weight: 500;
+  }
+  .variant-desc {
+    font-size: .8rem; color: var(--text); line-height: 1.6;
+  }
+</style>
 
 <!-- ══ Benchmarks ══════════════════════════════════════════════════════════ -->
 <section class="section" id="benchmarks">
