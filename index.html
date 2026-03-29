@@ -33,56 +33,182 @@
   </script>
 
   <style>
-    /* ── TL;DR box ── */
-    .tldr-box {
-      background-color: #f9f9f9;
-      border-left: 8px solid #00d1b2;
-      padding: 1.5rem;
-      margin-top: 2rem;
-      border-radius: 0 4px 4px 0;
+    /* ── Reset / Base ── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* ── CSS Variables ── */
+    :root {
+      --teal:       #00bfa5;
+      --teal-light: rgba(0,191,165,0.12);
+      --teal-mid:   rgba(0,191,165,0.55);
+      --red:        #ef5350;
+      --red-light:  rgba(239,83,80,0.12);
+      --gold:       #f9a825;
+      --gray:       #607d8b;
+      --gray-light: rgba(96,125,139,0.12);
+      --text:       #263238;
+      --text-soft:  #546e7a;
+      --bg:         #f5f7f8;
+      --bg-card:    #ffffff;
+      --border:     #e0e6ea;
+      --radius:     8px;
+      --shadow:     0 2px 12px rgba(0,0,0,0.08);
     }
+
+    body { color: var(--text); background: var(--bg); font-family: 'Noto Sans', sans-serif; }
 
     /* ── Navbar ── */
-    .nav-center {
-      justify-content: center;
-      flex-grow: 1;
-    }
+    .navbar { background: #fff; border-bottom: 1px solid var(--border); }
+    .nav-center { justify-content: center; flex-grow: 1; }
+    .navbar-item { font-weight: 600; color: var(--text-soft); transition: color .2s; }
+    .navbar-item:hover { color: var(--teal); background: transparent; }
 
-    /* ── Hero sub-line ── */
+    /* ── Hero ── */
+    .hero { background: linear-gradient(135deg, #e0f2f1 0%, #f5f7f8 60%, #e8eaf6 100%); }
     .promo-slogan {
-      font-size: 1.25rem;
-      font-weight: 500;
-      color: #4a4a4a;
-      margin-top: 5px;
-      font-style: italic;
+      font-size: 1.2rem; font-weight: 500; color: var(--text-soft);
+      margin-top: 6px; font-style: italic;
     }
 
-    /* ── Motivation figure ── */
-    .motivation-img {
-      max-width: 800px;
-      margin: 20px auto;
-      display: block;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    /* ── TL;DR box ── */
+    .tldr-box {
+      background: var(--bg-card);
+      border-left: 5px solid var(--teal);
+      padding: 1.4rem 1.6rem;
+      margin-top: 1.8rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      box-shadow: var(--shadow);
+    }
+    .tldr-box .title { color: var(--teal); margin-bottom: .6rem; }
+
+    /* ── Section card ── */
+    .card-section {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      margin-bottom: 2rem;
     }
 
     /* ── Motivation video ── */
     .motivation-video-wrap {
-      max-width: 860px;
-      margin: 2rem auto;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+      max-width: 860px; margin: 1.6rem auto;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
     }
-    .motivation-video-wrap video {
-      width: 100%;
-      display: block;
-    }
+    .motivation-video-wrap video { width: 100%; display: block; }
 
     /* ── Method bullet list ── */
-    .method-list li {
-      margin-bottom: 0.6rem;
+    .method-list li { margin-bottom: .6rem; }
+
+    /* ══════════════════════════════════════
+       INTERACTIVE TABLES
+    ══════════════════════════════════════ */
+    .itab-wrapper {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
     }
+    .itab-header {
+      background: linear-gradient(90deg, var(--teal) 0%, #26a69a 100%);
+      color: #fff;
+      padding: .9rem 1.2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: .5rem;
+    }
+    .itab-header h3 { margin: 0; font-size: 1rem; font-weight: 700; color: #fff; }
+    .itab-header p  { margin: 0; font-size: .78rem; opacity: .85; }
+
+    /* filter controls */
+    .itab-controls {
+      padding: .7rem 1.2rem;
+      background: #f0faf8;
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+    }
+    .itab-controls label { font-size: .82rem; font-weight: 600; color: var(--text-soft); margin-right: .25rem; }
+    .itab-controls select, .itab-controls button {
+      font-size: .82rem; padding: .25rem .55rem;
+      border-radius: 4px; border: 1px solid var(--border);
+      background: #fff; cursor: pointer; transition: border-color .15s;
+    }
+    .itab-controls select:hover, .itab-controls button:hover { border-color: var(--teal); }
+    .filter-btn.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+    /* table itself */
+    .itab-scroll { overflow-x: auto; }
+    .itab {
+      width: 100%; border-collapse: collapse;
+      font-size: .875rem;
+    }
+    .itab thead th {
+      background: #ecf9f7; color: var(--text);
+      padding: .65rem 1rem; text-align: left;
+      border-bottom: 2px solid var(--teal-mid);
+      white-space: nowrap; position: relative;
+    }
+    .itab thead th.sortable { cursor: pointer; user-select: none; }
+    .itab thead th.sortable::after { content: " ⇅"; opacity: .4; font-size: .75rem; }
+    .itab thead th.sort-asc::after  { content: " ↑"; opacity: 1; color: var(--teal); }
+    .itab thead th.sort-desc::after { content: " ↓"; opacity: 1; color: var(--teal); }
+    .itab tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
+    .itab tbody tr:hover { background: var(--teal-light); }
+    .itab tbody td { padding: .6rem 1rem; white-space: nowrap; }
+    .itab tbody tr:last-child { border-bottom: none; }
+
+    /* highlight cells */
+    .best   { font-weight: 700; color: var(--teal); }
+    .worst  { color: var(--red); }
+    .tag-oom {
+      display: inline-block; background: var(--red); color: #fff;
+      font-size: .7rem; font-weight: 700; padding: 1px 5px; border-radius: 3px;
+    }
+    .tag-na {
+      display: inline-block; background: #cfd8dc; color: #fff;
+      font-size: .7rem; font-weight: 700; padding: 1px 5px; border-radius: 3px;
+    }
+    .badge-speedup {
+      display: inline-block;
+      background: var(--teal); color: #fff;
+      font-size: .72rem; font-weight: 700;
+      padding: 1px 6px; border-radius: 10px; margin-left: 4px;
+    }
+    .badge-slow {
+      display: inline-block;
+      background: var(--red); color: #fff;
+      font-size: .72rem; font-weight: 700;
+      padding: 1px 6px; border-radius: 10px; margin-left: 4px;
+    }
+
+    /* summary stat chips */
+    .stat-chips { display: flex; gap: .6rem; flex-wrap: wrap; padding: .7rem 1.2rem; background: #fafafa; border-top: 1px solid var(--border); }
+    .stat-chip {
+      background: var(--teal-light); border: 1px solid var(--teal-mid);
+      border-radius: 20px; padding: .2rem .75rem; font-size: .78rem; font-weight: 600; color: #00695c;
+    }
+
+    /* row hidden by filter */
+    tr.row-hidden { display: none; }
+
+    /* ── Chart grid ── */
+    .chart-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.5rem;
+    }
+    @media (max-width: 640px) { .chart-grid { grid-template-columns: 1fr; } }
+    .chart-card {
+      background: var(--bg-card); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 1rem;
+    }
+    .chart-card h3 { font-size: .85rem; font-weight: 700; text-align: center; margin-bottom: .15rem; }
+    .chart-card p  { font-size: .72rem; color: var(--text-soft); text-align: center; margin-bottom: .5rem; }
+
+    /* ── BibTeX ── */
+    pre { background: #263238; color: #eceff1; border-radius: var(--radius); padding: 1.2rem; font-size: .82rem; overflow-x: auto; }
+
+    /* ── Motivation img ── */
+    .motivation-img { max-width: 800px; margin: 20px auto; display: block; border-radius: 8px; box-shadow: var(--shadow); }
   </style>
 </head>
 <body>
@@ -105,54 +231,39 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-
           <h1 class="title is-1 publication-title">
             ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers
           </h1>
-
           <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              <a href="https://cchsu.info/">Chih-Chung Hsu</a>,
-            </span>
+            <span class="author-block"><a href="https://cchsu.info/">Chih-Chung Hsu</a>,</span>
             <span class="author-block">Xin-Di Ma,</span>
             <span class="author-block">Wo-Ting Liao,</span>
-            <span class="author-block">
-              <a href="https://ming053l.github.io/">Chia-Ming Lee</a>
-            </span>
+            <span class="author-block"><a href="https://ming053l.github.io/">Chia-Ming Lee</a></span>
           </div>
-
           <div class="is-size-5 publication-authors">
             <span class="author-block">National Yang Ming Chiao Tung University</span>
           </div>
-
           <h1 style="font-size:24px; font-weight:bold; margin-top:10px;">CVPR Findings 2026</h1>
           <p class="promo-slogan">Can't use FA on your device? Try ELSA on!</p>
-
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
                 <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
-                  <span>Paper</span>
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
                 </a>
               </span>
               <span class="link-block">
-                <a href="https://arxiv.org/abs/2603.11000"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="ai ai-arxiv"></i></span>
-                  <span>arXiv</span>
+                <a href="https://arxiv.org/abs/2603.11000" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
                 </a>
               </span>
               <span class="link-block">
-                <a href="https://github.com/ming053l/ELSA"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-github"></i></span>
-                  <span>Code</span>
+                <a href="https://github.com/ming053l/ELSA" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
                 </a>
               </span>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -167,16 +278,25 @@
         <source src="./static/videos/ELSATeaserLightNoTitle_.mp4" type="video/mp4">
       </video>
 
+      <!-- ═══ CORRECTED TL;DR ═══ -->
       <div class="tldr-box">
         <h2 class="title is-4">TL;DR</h2>
         <div class="content is-size-5">
-          Standard attention is slow in FP32, and <strong>FlashAttention is strictly bound to
-          specialized hardware</strong> (Tensor Cores). <strong>ELSA</strong> breaks this limitation
-          by recasting attention as a <em>parallel prefix scan</em> over an associative monoid.
-          It achieves <strong>O(log&nbsp;n) parallel depth</strong> and <strong>O(n) memory</strong>
-          on <strong>any hardware</strong>—from data-center GPUs to embedded devices—without
-          sacrificing precision or requiring <strong>any retraining</strong>. Drop it into CLIP
-          or SAM and get up to <strong>3.5&times; FP32 speedup</strong> over ME-SDPA.
+          Standard FP32 attention is slow, and <strong>FlashAttention requires Tensor Cores</strong>
+          (HMMA/GMMA) unavailable on older GPUs, AMD hardware, and edge devices.
+          <strong>ELSA</strong> breaks this limitation by recasting attention as a
+          <em>parallel prefix scan</em> over an associative monoid, achieving
+          <strong>O(log&nbsp;n) parallel depth</strong> and <strong>O(n) memory</strong>
+          on <strong>any hardware</strong>—with no retraining required.
+          <br><br>
+          On <strong>A100 (FP32)</strong>, ELSA delivers up to
+          <strong>3.5&times; speedup over ME-SDPA</strong> at 16K tokens.
+          On <strong>CLIP ViT-L/14</strong> (full image encoder, FP32),
+          ELSA reduces inference latency by <strong>3.7%</strong> with no memory overhead
+          as a drop-in replacement—no retraining, no precision loss.
+          On <strong>Jetson TX2</strong> (edge device),
+          ELSA achieves a consistent <strong>~1.6&times; speedup</strong> over the Math kernel
+          across all sequence lengths tested (64–900 tokens).
         </div>
       </div>
     </div>
@@ -216,26 +336,20 @@
         A <strong>Summed-Area Table (SAT)</strong>—also known as an integral image—lets you
         compute the sum of any rectangular region in <em>constant time</em>, regardless of its
         size, by a single-pass precomputation. The animation below contrasts brute-force box
-        filtering (recomputing every neighborhood from scratch) with the SAT approach (build
-        once, query instantly):
+        filtering (recomputing every neighborhood from scratch) with the SAT approach:
       </p>
-
-      <!-- Integral image demo video -->
       <div class="motivation-video-wrap">
         <video autoplay muted loop playsinline>
           <source src="./static/videos/integral_fill.mp4" type="video/mp4">
         </video>
       </div>
-
       <p>
         Softmax attention faces an analogous bottleneck. The standard online recurrence of
         Rabe &amp; Staats compresses the $O(n^2)$ attention matrix to $O(n)$ memory, but at
-        the cost of <strong>strict sequentiality</strong>: each token update depends on all
-        previous ones, forcing $O(n)$ synchronization steps. ELSA resolves this by showing
+        the cost of <strong>strict sequentiality</strong>. ELSA resolves this by showing
         that the attention state $(m, S, W)$ satisfies the same <em>composability</em> property
         as prefix sums—enabling a fully parallel reduction with $O(\log n)$ depth.
       </p>
-
     </div>
   </div>
 </section>
@@ -245,83 +359,37 @@
   <div class="container is-max-desktop">
     <h2 class="title is-3">Method: Parallel Monoid Scan</h2>
     <div class="content has-text-justified">
-
       <p>
         ELSA transforms the sequential online softmax recurrence into a fully parallelizable
         computation by proving that attention states $(m, S, W)$ form an
-        <strong>associative monoid</strong> under a merge operator $\oplus$. This algebraic
-        structure is precisely what enables standard parallel-scan primitives—analogous to
-        how prefix sums unlock $O(1)$ range queries in integral images—without any
-        approximation or hardware-specific instructions.
+        <strong>associative monoid</strong> under a merge operator $\oplus$.
       </p>
-
       <figure class="image">
         <img src="./static/images/ELSA_IntegralImage.png"
-             alt="Integral Image analogy for ELSA"
-             class="motivation-img">
+             alt="Integral Image analogy for ELSA" class="motivation-img">
       </figure>
-      
-      <h3 class="title is-5" style="margin-top: 1.5rem;">From Sequential Recurrence to Parallel Scan</h3>
+      <h3 class="title is-5" style="margin-top:1.5rem;">From Sequential Recurrence to Parallel Scan</h3>
       <p>
-        Classical memory-efficient attention (ME-SDPA) chains tokens one by one: each step
-        depends on the previous running maximum $m_j$, forcing $O(n)$ sequential depth.
-        On a GPU with one million tokens, this means one million synchronization barriers—leaving
-        the vast majority of threads idle. ELSA breaks this chain by observing that any two
-        contiguous blocks of attention states can be <em>merged exactly</em> via:
+        Classical ME-SDPA chains tokens one by one: each step depends on the previous running
+        maximum $m_j$, forcing $O(n)$ sequential depth.
+        ELSA breaks this chain by observing that any two contiguous blocks can be
+        <em>merged exactly</em> via:
       </p>
       <p style="text-align:center;">
         $u_A \oplus u_B = \mathrm{renorm}\!\left(\max(m_A, m_B),\; \tilde{S}_A + \tilde{S}_B,\; \tilde{W}_A + \tilde{W}_B\right)$
       </p>
-      <p>
-        Because $\oplus$ is associative (with identity $e = (-\infty, 0, \mathbf{0})$),
-        blocks can be reduced independently in parallel and combined in a logarithmic
-        reduction tree—exactly as prefix sums compose corner values in a SAT.
-      </p>
-
-      <h3 class="title is-5" style="margin-top: 1.5rem;">Two-Level GPU Scan</h3>
-      <p>
-        We map this monoid to a two-level scan architecture tailored to the GPU memory hierarchy:
-      </p>
+      <h3 class="title is-5" style="margin-top:1.5rem;">Two-Level GPU Scan</h3>
       <ul class="method-list">
-        <li>
-          <strong>Intra-block (Hillis–Steele):</strong> Each thread block independently reduces
-          128 tokens in shared memory using a tree scan. All threads remain active throughout,
-          maximizing shared-memory bandwidth.
-        </li>
-        <li>
-          <strong>Inter-block (Blelloch):</strong> A work-optimal two-pass scan aggregates
-          block-level states in global memory, adding only $2\lceil\log_2(n/B)\rceil$ merge
-          levels. The identity element $e$ allows the down-sweep to initialize boundary states
-          without special-casing.
-        </li>
+        <li><strong>Intra-block (Hillis–Steele):</strong> Each thread block independently reduces
+          128 tokens in shared memory using a tree scan.</li>
+        <li><strong>Inter-block (Blelloch):</strong> A work-optimal two-pass scan aggregates
+          block-level states in global memory, adding only $2\lceil\log_2(n/B)\rceil$ merge levels.</li>
       </ul>
       <p>
-        The total scan depth is $L(n, B) = \lceil\log_2 B\rceil + 2\lceil\log_2(n/B)\rceil + 3
-        \leq 2\lceil\log_2 n\rceil + 3$, yielding a provable FP32 relative error bound of
-        $O(u \log n)$—logarithmic growth versus the $O(nu)$ of sequential recurrence.
+        Total scan depth: $L(n, B) = \lceil\log_2 B\rceil + 2\lceil\log_2(n/B)\rceil + 3
+        \leq 2\lceil\log_2 n\rceil + 3$, with a provable FP32 relative error of
+        $O(u \log n)$.
       </p>
-
-      <h3 class="title is-5" style="margin-top: 1.5rem;">Key Design Properties</h3>
-      <ul class="method-list">
-        <li>
-          <strong>Algorithmic Parallelization:</strong> The attention state is treated as a
-          one-dimensional analogue of an integral image, enabling partial sums to be merged
-          in parallel rather than accumulated sequentially.
-        </li>
-        <li>
-          <strong>Hardware Agnosticism:</strong> $\oplus$ requires only scalar
-          <code>max</code>/<code>exp</code> and vector <code>fma</code>—no
-          HMMA/GMMA Tensor Core instructions. ELSA runs identically on A100s,
-          older AMD devices, and embedded systems such as the Jetson TX2.
-        </li>
-        <li>
-          <strong>Exact Precision:</strong> Unlike linear-attention variants that approximate
-          the softmax operator, ELSA preserves full token-to-token interactions in real
-          arithmetic, making it a true drop-in replacement for pretrained models such as
-          CLIP and SAM with zero retraining.
-        </li>
-      </ul>
-
     </div>
   </div>
 </section>
@@ -330,178 +398,371 @@
 <section class="section" id="benchmarks">
   <div class="container is-max-desktop">
     <h2 class="title is-3">Performance Benchmarks</h2>
-    <div class="content">
-      <p>
-        All benchmarks are conducted on a single NVIDIA A100 (40 GB), averaged over 200 runs,
-        unless otherwise noted. ELSA's advantage over ME-SDPA widens consistently with sequence
-        length and resolution, reflecting the compounding cost of $O(n)$ sequential depth at scale.
-      </p>
+    <p class="has-text-grey" style="margin-bottom:1.5rem;">
+      All A100 benchmarks: single NVIDIA A100 (40 GB), CUDA 12.6, Triton 3.2.0, PyTorch 2.6,
+      averaged over 200 runs unless otherwise noted.
+      <em>We compare only exact, drop-in replacements; approximate linear-attention variants require retraining and are excluded.</em>
+    </p>
+
+    <!-- ── TABLE 1: FP32 Latency & Memory ── -->
+    <div class="itab-wrapper" id="tab-fp32">
+      <div class="itab-header">
+        <div>
+          <h3>FP32 Latency &amp; Peak Memory — A100</h3>
+          <p>Single attention head · synthetic sequences · 1K / 4K / 16K tokens</p>
+        </div>
+        <div style="font-size:.8rem; opacity:.9;">Click column headers to sort</div>
+      </div>
+      <div class="itab-controls">
+        <label>Precision:</label>
+        <button class="filter-btn active" data-tab="fp32" data-col="precision" data-val="all">All</button>
+        <button class="filter-btn" data-tab="fp32" data-col="precision" data-val="FP32">FP32</button>
+        <button class="filter-btn" data-tab="fp32" data-col="precision" data-val="FP16">FP16</button>
+        <span style="margin-left:.5rem; color:var(--text-soft); font-size:.78rem;">
+          * Standard SDPA OOM at 16K tokens in FP32/FP16.
+          † FA2/FA3 FP32 path reverts to untuned SIMD and is not reported.
+        </span>
+      </div>
+      <div class="itab-scroll">
+        <table class="itab" id="itab-fp32">
+          <thead>
+            <tr>
+              <th class="sortable" data-col="0">Method</th>
+              <th class="sortable" data-col="1">Precision</th>
+              <th class="sortable" data-col="2">Tokens</th>
+              <th class="sortable" data-col="3">Latency (ms)</th>
+              <th class="sortable" data-col="4">Peak Mem (GB)</th>
+              <th class="sortable" data-col="5">Speedup vs ME-SDPA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- FP32 rows -->
+            <tr data-precision="FP32"><td>Math-SDPA</td><td>FP32</td><td>1K</td><td>0.65</td><td>0.22</td><td>0.26×<span class="badge-slow">–</span></td></tr>
+            <tr data-precision="FP32"><td>ME-SDPA</td><td>FP32</td><td>1K</td><td>0.25</td><td>0.11</td><td>1.00× (baseline)</td></tr>
+            <tr data-precision="FP32"><td class="best">ELSA</td><td>FP32</td><td>1K</td><td class="best">0.19</td><td class="best">0.10</td><td class="best">1.32×<span class="badge-speedup">+32%</span></td></tr>
+            <tr data-precision="FP32"><td>Math-SDPA</td><td>FP32</td><td>4K</td><td>8.28</td><td>1.83</td><td>0.35×<span class="badge-slow">–</span></td></tr>
+            <tr data-precision="FP32"><td>ME-SDPA</td><td>FP32</td><td>4K</td><td>2.89</td><td>0.15</td><td>1.00× (baseline)</td></tr>
+            <tr data-precision="FP32"><td class="best">ELSA</td><td>FP32</td><td>4K</td><td class="best">0.92</td><td class="best">0.16</td><td class="best">3.14×<span class="badge-speedup">+214%</span></td></tr>
+            <tr data-precision="FP32"><td>Math-SDPA</td><td>FP32</td><td>16K</td><td class="worst">OOM</td><td class="worst">OOM</td><td>—</td></tr>
+            <tr data-precision="FP32"><td>ME-SDPA</td><td>FP32</td><td>16K</td><td>12.06</td><td>0.29</td><td>1.00× (baseline)</td></tr>
+            <tr data-precision="FP32"><td class="best">ELSA</td><td>FP32</td><td>16K</td><td class="best">3.46</td><td class="best">0.34</td><td class="best">3.49×<span class="badge-speedup">+249%</span></td></tr>
+            <!-- FP16 rows -->
+            <tr data-precision="FP16"><td>Math-SDPA</td><td>FP16</td><td>1K</td><td>0.55</td><td>0.22</td><td>0.22×<span class="badge-slow">–</span></td></tr>
+            <tr data-precision="FP16"><td>FA2</td><td>FP16</td><td>1K</td><td>0.18</td><td>0.11</td><td>0.67×<span class="badge-slow">–</span></td></tr>
+            <tr data-precision="FP16"><td>FA3</td><td>FP16</td><td>1K</td><td>0.27</td><td>0.12</td><td>0.44×<span class="badge-slow">–</span></td></tr>
+            <tr data-precision="FP16"><td>ME-SDPA</td><td>FP16</td><td>1K</td><td>0.12</td><td>0.11</td><td>1.00× (baseline)</td></tr>
+            <tr data-precision="FP16"><td class="best">ELSA</td><td>FP16</td><td>1K</td><td class="best">0.12</td><td class="best">0.10</td><td>1.00×</td></tr>
+            <tr data-precision="FP16"><td>Math-SDPA</td><td>FP16</td><td>4K</td><td>5.80</td><td>1.85</td><td>0.08×<span class="badge-slow">–</span></td></tr>
+            <tr data-precision="FP16"><td>FA2</td><td>FP16</td><td>4K</td><td>0.47</td><td>0.15</td><td>0.96×</td></tr>
+            <tr data-precision="FP16"><td>FA3</td><td>FP16</td><td>4K</td><td>0.55</td><td>0.16</td><td>0.82×</td></tr>
+            <tr data-precision="FP16"><td>ME-SDPA</td><td>FP16</td><td>4K</td><td>0.49</td><td>0.15</td><td>1.00× (baseline)</td></tr>
+            <tr data-precision="FP16"><td class="best">ELSA</td><td>FP16</td><td>4K</td><td class="best">0.49</td><td class="best">0.12</td><td>1.00×</td></tr>
+            <tr data-precision="FP16"><td>Math-SDPA</td><td>FP16</td><td>16K</td><td class="worst">OOM</td><td class="worst">OOM</td><td>—</td></tr>
+            <tr data-precision="FP16"><td>FA2</td><td>FP16</td><td>16K</td><td>6.01</td><td>0.26</td><td>0.93×</td></tr>
+            <tr data-precision="FP16"><td>FA3</td><td>FP16</td><td>16K</td><td>6.66</td><td>0.36</td><td>0.84×</td></tr>
+            <tr data-precision="FP16"><td>ME-SDPA</td><td>FP16</td><td>16K</td><td>5.71</td><td>0.29</td><td>1.00× (baseline)</td></tr>
+            <tr data-precision="FP16"><td class="best">ELSA</td><td>FP16</td><td>16K</td><td class="best">6.66</td><td class="best">0.19</td><td>0.86×</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stat-chips">
+        <span class="stat-chip">FP32 peak speedup: 3.49× (16K)</span>
+        <span class="stat-chip">ELSA lowest memory at 16K FP16: 0.19 GB</span>
+        <span class="stat-chip">Math-SDPA OOM beyond 4K (FP32)</span>
+      </div>
     </div>
 
-    <!-- 2×2 chart grid -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:1.5rem;">
+    <!-- ── TABLE 2: CLIP Image Encoder ── -->
+    <div class="itab-wrapper" id="tab-clip">
+      <div class="itab-header">
+        <div>
+          <h3>CLIP Image-Encoder Inference — Full Pipeline, Strict FP32</h3>
+          <p>ELSA vs. ME-SDPA baseline · no retraining · A100 · attention-scope speedup in parentheses</p>
+        </div>
+      </div>
+      <div class="itab-controls">
+        <label>Model:</label>
+        <button class="filter-btn active" data-tab="clip" data-col="model" data-val="all">All</button>
+        <button class="filter-btn" data-tab="clip" data-col="model" data-val="ViT-B">ViT-B</button>
+        <button class="filter-btn" data-tab="clip" data-col="model" data-val="ViT-L">ViT-L</button>
+        <span style="margin-left:.5rem; color:var(--text-soft); font-size:.78rem;">
+          * FA2/FA3 have no compatible FP32 path for CLIP; ELSA is the only hardware-agnostic exact-attention alternative.
+          † Attention-proxy speedups (attention module only): ViT-B/16 1.46–1.98×, ViT-L/14 1.54–2.15×.
+        </span>
+      </div>
+      <div class="itab-scroll">
+        <table class="itab" id="itab-clip">
+          <thead>
+            <tr>
+              <th class="sortable" data-col="0">Model</th>
+              <th class="sortable" data-col="1">Variant</th>
+              <th class="sortable" data-col="2">Method</th>
+              <th class="sortable" data-col="3">Latency (ms)</th>
+              <th class="sortable" data-col="4">Latency Reduction</th>
+              <th class="sortable" data-col="5">Speedup vs ME-SDPA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-model="ViT-B"><td>ViT-B/32</td><td>CLIP</td><td>ME-SDPA</td><td>2.398</td><td>—</td><td>1.00×</td></tr>
+            <tr data-model="ViT-B"><td>ViT-B/32</td><td>CLIP</td><td>ELSA-Strict</td><td>2.159</td><td class="best">−10.0%</td><td class="best">1.111×<span class="badge-speedup">+11.1%</span></td></tr>
+            <tr data-model="ViT-B"><td>ViT-B/32</td><td>CLIP</td><td>ELSA-Turbo</td><td>2.150</td><td class="best">−10.3%</td><td class="best">1.115×<span class="badge-speedup">+11.5%</span></td></tr>
+            <tr data-model="ViT-B"><td>ViT-B/16</td><td>CLIP</td><td>ME-SDPA</td><td>4.568</td><td>—</td><td>1.00×</td></tr>
+            <tr data-model="ViT-B"><td>ViT-B/16</td><td>CLIP</td><td>ELSA-Strict</td><td>4.365</td><td class="best">−4.4%</td><td class="best">1.046×<span class="badge-speedup">+4.6%</span></td></tr>
+            <tr data-model="ViT-B"><td>ViT-B/16</td><td>CLIP</td><td>ELSA-Turbo</td><td>4.329</td><td class="best">−5.2%</td><td class="best">1.055×<span class="badge-speedup">+5.5%</span></td></tr>
+            <tr data-model="ViT-L"><td>ViT-L/14</td><td>CLIP</td><td>ME-SDPA</td><td>15.419</td><td>—</td><td>1.00×</td></tr>
+            <tr data-model="ViT-L"><td>ViT-L/14</td><td>CLIP</td><td>ELSA-Strict</td><td>14.914</td><td class="best">−3.3%</td><td class="best">1.034×<span class="badge-speedup">+3.4%</span></td></tr>
+            <tr data-model="ViT-L"><td>ViT-L/14</td><td>CLIP</td><td>ELSA-Turbo</td><td>14.842</td><td class="best">−3.7%</td><td class="best">1.039×<span class="badge-speedup">+3.9%</span></td></tr>
+            <tr data-model="ViT-L"><td>ViT-L/14@336</td><td>CLIP</td><td>ME-SDPA</td><td>29.665</td><td>—</td><td>1.00×</td></tr>
+            <tr data-model="ViT-L"><td>ViT-L/14@336</td><td>CLIP</td><td>ELSA-Strict</td><td>27.989</td><td class="best">−5.7%</td><td class="best">1.060×<span class="badge-speedup">+6.0%</span></td></tr>
+            <tr data-model="ViT-L"><td>ViT-L/14@336</td><td>CLIP</td><td>ELSA-Turbo</td><td>27.931</td><td class="best">−5.8%</td><td class="best">1.062×<span class="badge-speedup">+6.2%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stat-chips">
+        <span class="stat-chip">Best full-pipeline speedup: 1.115× (ViT-B/32, ELSA-Turbo)</span>
+        <span class="stat-chip">FA2/FA3: no compatible FP32 path for CLIP</span>
+        <span class="stat-chip">Attention-module only: up to 2.15× (ViT-L/14-336, 560px)</span>
+      </div>
+    </div>
 
-      <div>
-        <h3 class="title is-6 has-text-centered" style="margin-bottom:0.2rem;">FP32 Latency (ms) &mdash; A100</h3>
-        <p class="has-text-centered is-size-7 has-text-grey" style="margin-bottom:0.5rem;">Single attn head &middot; 1K / 4K / 16K tokens</p>
+    <!-- ── TABLE 3: VGGT / FastVGGT ── -->
+    <div class="itab-wrapper" id="tab-vggt">
+      <div class="itab-header">
+        <div>
+          <h3>3D Reconstruction — VGGT &amp; FastVGGT Speedup</h3>
+          <p>ELSA-FP32 vs. xFormers-FP32 · 350×518 input · 1,041 tokens/frame</p>
+        </div>
+      </div>
+      <div class="itab-controls">
+        <label>Model:</label>
+        <button class="filter-btn active" data-tab="vggt" data-col="model" data-val="all">All</button>
+        <button class="filter-btn" data-tab="vggt" data-col="model" data-val="VGGT">VGGT Baseline</button>
+        <button class="filter-btn" data-tab="vggt" data-col="model" data-val="FastVGGT">FastVGGT</button>
+      </div>
+      <div class="itab-scroll">
+        <table class="itab" id="itab-vggt">
+          <thead>
+            <tr>
+              <th class="sortable" data-col="0">Model</th>
+              <th class="sortable" data-col="1">Method</th>
+              <th class="sortable" data-col="2">Frames</th>
+              <th class="sortable" data-col="3">Time (s)</th>
+              <th class="sortable" data-col="4">Memory (GB)</th>
+              <th class="sortable" data-col="5">Speedup vs xFormers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- VGGT baseline -->
+            <tr data-model="VGGT"><td>VGGT</td><td>xFormers-FP32</td><td>50</td><td>18.36</td><td>15.74</td><td>1.00× (baseline)</td></tr>
+            <tr data-model="VGGT"><td>VGGT</td><td>FA2-FP16</td><td>50</td><td>3.67</td><td>17.16</td><td>5.00× (FP16, +9% mem)</td></tr>
+            <tr data-model="VGGT"><td>VGGT</td><td class="best">ELSA-FP32</td><td>50</td><td class="best">12.56</td><td class="best">15.74</td><td class="best">1.46×<span class="badge-speedup">+46%</span></td></tr>
+            <tr data-model="VGGT"><td>VGGT</td><td>xFormers-FP32</td><td>100</td><td>61.75</td><td>26.67</td><td>1.00× (baseline)</td></tr>
+            <tr data-model="VGGT"><td>VGGT</td><td>FA2-FP16</td><td>100</td><td>9.44</td><td>27.13</td><td>6.54× (FP16)</td></tr>
+            <tr data-model="VGGT"><td>VGGT</td><td class="best">ELSA-FP32</td><td>100</td><td class="best">29.49</td><td class="best">26.68</td><td class="best">2.09×<span class="badge-speedup">+109%</span></td></tr>
+            <tr data-model="VGGT"><td>VGGT</td><td>xFormers-FP32</td><td>150</td><td>130.83</td><td>37.59</td><td>1.00× (baseline)</td></tr>
+            <tr data-model="VGGT"><td>VGGT</td><td>FA2-FP16</td><td>150</td><td>17.88</td><td>37.43</td><td>7.31× (FP16)</td></tr>
+            <tr data-model="VGGT"><td>VGGT</td><td class="best">ELSA-FP32</td><td>150</td><td class="best">55.97</td><td class="best">37.59</td><td class="best">2.34×<span class="badge-speedup">+134%</span></td></tr>
+            <!-- FastVGGT -->
+            <tr data-model="FastVGGT"><td>FastVGGT</td><td>xFormers-FP32</td><td>100</td><td>23.94</td><td>11.50</td><td>1.00×</td></tr>
+            <tr data-model="FastVGGT"><td>FastVGGT</td><td class="best">ELSA-FP32</td><td>100</td><td class="best">20.22</td><td class="best">11.50</td><td class="best">1.18×<span class="badge-speedup">+18%</span></td></tr>
+            <tr data-model="FastVGGT"><td>FastVGGT</td><td>xFormers-FP32</td><td>200</td><td>65.81</td><td>18.56</td><td>1.00×</td></tr>
+            <tr data-model="FastVGGT"><td>FastVGGT</td><td class="best">ELSA-FP32</td><td>200</td><td class="best">50.76</td><td class="best">18.56</td><td class="best">1.30×<span class="badge-speedup">+30%</span></td></tr>
+            <tr data-model="FastVGGT"><td>FastVGGT</td><td>xFormers-FP32</td><td>300</td><td>129.97</td><td>25.63</td><td>1.00×</td></tr>
+            <tr data-model="FastVGGT"><td>FastVGGT</td><td class="best">ELSA-FP32</td><td>300</td><td class="best">97.89</td><td class="best">25.63</td><td class="best">1.33×<span class="badge-speedup">+33%</span></td></tr>
+            <tr data-model="FastVGGT"><td>FastVGGT</td><td>xFormers-FP32</td><td>400</td><td>218.30</td><td>32.70</td><td>1.00×</td></tr>
+            <tr data-model="FastVGGT"><td>FastVGGT</td><td class="best">ELSA-FP32</td><td>400</td><td class="best">158.04</td><td class="best">32.70</td><td class="best">1.38×<span class="badge-speedup">+38%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stat-chips">
+        <span class="stat-chip">VGGT peak: 2.34× at 150 frames (FP32, exact)</span>
+        <span class="stat-chip">Memory identical to xFormers-FP32 across all configs</span>
+        <span class="stat-chip">Math-FP32 OOM beyond 30 frames</span>
+      </div>
+    </div>
+
+    <!-- ── TABLE 4: Jetson TX2 Edge ── -->
+    <div class="itab-wrapper" id="tab-jetson">
+      <div class="itab-header">
+        <div>
+          <h3>Embedded Device — Jetson TX2 (FP32 &amp; FP16)</h3>
+          <p>ELSA vs. PyTorch Math kernel · batch 1 · d=64 · no Tensor Core dependency</p>
+        </div>
+      </div>
+      <div class="itab-controls">
+        <label>Precision:</label>
+        <button class="filter-btn active" data-tab="jetson" data-col="prec" data-val="all">All</button>
+        <button class="filter-btn" data-tab="jetson" data-col="prec" data-val="FP32">FP32</button>
+        <button class="filter-btn" data-tab="jetson" data-col="prec" data-val="FP16">FP16</button>
+      </div>
+      <div class="itab-scroll">
+        <table class="itab" id="itab-jetson">
+          <thead>
+            <tr>
+              <th class="sortable" data-col="0">Tokens</th>
+              <th class="sortable" data-col="1">Precision</th>
+              <th class="sortable" data-col="2">Math (ms)</th>
+              <th class="sortable" data-col="3">ELSA (ms)</th>
+              <th class="sortable" data-col="4">Speedup</th>
+              <th class="sortable" data-col="5">Latency Reduction</th>
+            </tr>
+          </thead>
+          <tbody id="jetson-body">
+            <!-- FP16 -->
+            <tr data-prec="FP16"><td>64</td><td>FP16</td><td>1.06</td><td class="best">0.69</td><td class="best">1.54×</td><td class="best">−34.9%</td></tr>
+            <tr data-prec="FP16"><td>196</td><td>FP16</td><td>10.10</td><td class="best">6.47</td><td class="best">1.56×</td><td class="best">−35.9%</td></tr>
+            <tr data-prec="FP16"><td>400</td><td>FP16</td><td>41.23</td><td class="best">25.95</td><td class="best">1.59×</td><td class="best">−37.0%</td></tr>
+            <tr data-prec="FP16"><td>576</td><td>FP16</td><td>84.54</td><td class="best">52.78</td><td class="best">1.60×</td><td class="best">−37.6%</td></tr>
+            <tr data-prec="FP16"><td>784</td><td>FP16</td><td>157.45</td><td class="best">98.47</td><td class="best">1.60×</td><td class="best">−37.4%</td></tr>
+            <tr data-prec="FP16"><td>900</td><td>FP16</td><td>207.55</td><td class="best">129.74</td><td class="best">1.60×</td><td class="best">−37.5%</td></tr>
+            <!-- FP32 -->
+            <tr data-prec="FP32"><td>64</td><td>FP32</td><td>1.06</td><td class="best">0.69</td><td class="best">1.54×</td><td class="best">−34.9%</td></tr>
+            <tr data-prec="FP32"><td>196</td><td>FP32</td><td>10.12</td><td class="best">6.48</td><td class="best">1.56×</td><td class="best">−36.0%</td></tr>
+            <tr data-prec="FP32"><td>400</td><td>FP32</td><td>41.34</td><td class="best">26.04</td><td class="best">1.59×</td><td class="best">−37.0%</td></tr>
+            <tr data-prec="FP32"><td>576</td><td>FP32</td><td>84.76</td><td class="best">52.96</td><td class="best">1.60×</td><td class="best">−37.5%</td></tr>
+            <tr data-prec="FP32"><td>784</td><td>FP32</td><td>157.89</td><td class="best">98.86</td><td class="best">1.60×</td><td class="best">−37.4%</td></tr>
+            <tr data-prec="FP32"><td>900</td><td>FP32</td><td>208.91</td><td class="best">131.14</td><td class="best">1.59×</td><td class="best">−37.2%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stat-chips">
+        <span class="stat-chip">Consistent ~1.6× speedup across all token lengths</span>
+        <span class="stat-chip">FP16 ≈ FP32 latency on TX2 (SIMD, no Tensor Cores)</span>
+        <span class="stat-chip">FA2/FA3 unavailable on Jetson TX2 (compute capability 6.2)</span>
+      </div>
+    </div>
+
+    <!-- ── TABLE 5: NLP / BERT / Downstream ── -->
+    <div class="itab-wrapper" id="tab-nlp">
+      <div class="itab-header">
+        <div>
+          <h3>NLP &amp; Downstream Tasks</h3>
+          <p>BERT fixed-shape · variable-length packing · DPT segmentation · Swin COCO</p>
+        </div>
+      </div>
+      <div class="itab-controls">
+        <label>Task:</label>
+        <button class="filter-btn active" data-tab="nlp" data-col="task" data-val="all">All</button>
+        <button class="filter-btn" data-tab="nlp" data-col="task" data-val="BERT">BERT</button>
+        <button class="filter-btn" data-tab="nlp" data-col="task" data-val="VarLen">Var-Length</button>
+        <button class="filter-btn" data-tab="nlp" data-col="task" data-val="Other">Other</button>
+      </div>
+      <div class="itab-scroll">
+        <table class="itab" id="itab-nlp">
+          <thead>
+            <tr>
+              <th class="sortable" data-col="0">Task / Dataset</th>
+              <th class="sortable" data-col="1">Method</th>
+              <th class="sortable" data-col="2">Precision</th>
+              <th class="sortable" data-col="3">Latency (ms)</th>
+              <th class="sortable" data-col="4">Throughput</th>
+              <th class="sortable" data-col="5">Speedup</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- BERT -->
+            <tr data-task="BERT"><td>BERT SST-2</td><td>ME-SDPA</td><td>FP32</td><td>1.308</td><td>—</td><td>1.00×</td></tr>
+            <tr data-task="BERT"><td>BERT SST-2</td><td class="best">ELSA</td><td>FP32</td><td class="best">0.664</td><td>—</td><td class="best">1.97×<span class="badge-speedup">+97%</span></td></tr>
+            <tr data-task="BERT"><td>BERT IMDB</td><td>ME-SDPA</td><td>FP32</td><td>17.693</td><td>—</td><td>1.00×</td></tr>
+            <tr data-task="BERT"><td>BERT IMDB</td><td class="best">ELSA</td><td>FP32</td><td class="best">7.794</td><td>—</td><td class="best">2.27×<span class="badge-speedup">+127%</span></td></tr>
+            <!-- VarLen packing -->
+            <tr data-task="VarLen"><td>Padding-free VarLen</td><td>SDPA-FP32-mem</td><td>FP32</td><td>—</td><td>0.96 M tok/s</td><td>1.00×</td></tr>
+            <tr data-task="VarLen"><td>Padding-free VarLen</td><td>ELSA-Strict</td><td>FP32</td><td>—</td><td>2.00 M tok/s</td><td class="best">2.08×<span class="badge-speedup">+109%</span></td></tr>
+            <tr data-task="VarLen"><td>Padding-free VarLen</td><td>ELSA-Turbo</td><td>TF32</td><td>—</td><td>2.64 M tok/s</td><td class="best">2.75×<span class="badge-speedup">+175%</span></td></tr>
+            <tr data-task="VarLen"><td>Padding-free VarLen</td><td class="best">ELSA-FP16</td><td>FP16</td><td>—</td><td class="best">5.03 M tok/s</td><td class="best">5.24×<span class="badge-speedup">+424%</span></td></tr>
+            <!-- Other -->
+            <tr data-task="Other"><td>DPT Segmentation (COCO)</td><td>ME-SDPA</td><td>FP32</td><td>295.7</td><td>—</td><td>1.00×</td></tr>
+            <tr data-task="Other"><td>DPT Segmentation (COCO)</td><td class="best">ELSA</td><td>FP32</td><td class="best">252.7</td><td>—</td><td class="best">1.17×<span class="badge-speedup">+17%</span></td></tr>
+            <tr data-task="Other"><td>BERT Sentiment (FP16)</td><td>FA2</td><td>FP16</td><td>224.1</td><td>—</td><td>—</td></tr>
+            <tr data-task="Other"><td>BERT Sentiment (FP16)</td><td class="best">ELSA</td><td>FP16</td><td class="best">96.8</td><td>—</td><td class="best">2.31×<span class="badge-speedup">+131%</span></td></tr>
+            <tr data-task="Other"><td>Swin COCO Det. (FP16)</td><td>FA2</td><td>FP16</td><td>46.0</td><td>—</td><td>—</td></tr>
+            <tr data-task="Other"><td>Swin COCO Det. (FP16)</td><td class="best">ELSA</td><td>FP16</td><td class="best">40.1</td><td>—</td><td class="best">1.15×<span class="badge-speedup">+15%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stat-chips">
+        <span class="stat-chip">BERT IMDB: 2.27× (longer sequences benefit more)</span>
+        <span class="stat-chip">FP16 variable-length: 5.24× over SDPA-mem</span>
+        <span class="stat-chip">FP16 BERT vs FA2: 2.31× (true seq. len vs FA2's padded 512-token)</span>
+      </div>
+    </div>
+
+    <!-- ── TABLE 6: Hyperspectral ── -->
+    <div class="itab-wrapper" id="tab-hsi">
+      <div class="itab-header">
+        <div>
+          <h3>Hyperspectral Classification — HSIMAE-B/L (FP32)</h3>
+          <p>Throughput (imgs/s) and peak memory on Pavia, Salinas, WHU datasets</p>
+        </div>
+      </div>
+      <div class="itab-controls">
+        <label>Dataset:</label>
+        <button class="filter-btn active" data-tab="hsi" data-col="ds" data-val="all">All</button>
+        <button class="filter-btn" data-tab="hsi" data-col="ds" data-val="Pavia">Pavia</button>
+        <button class="filter-btn" data-tab="hsi" data-col="ds" data-val="Salinas">Salinas</button>
+        <button class="filter-btn" data-tab="hsi" data-col="ds" data-val="WHU">WHU</button>
+      </div>
+      <div class="itab-scroll">
+        <table class="itab" id="itab-hsi">
+          <thead>
+            <tr>
+              <th class="sortable" data-col="0">Model</th>
+              <th class="sortable" data-col="1">Dataset</th>
+              <th class="sortable" data-col="2">Method</th>
+              <th class="sortable" data-col="3">Throughput (imgs/s)</th>
+              <th class="sortable" data-col="4">Peak Mem (GB)</th>
+              <th class="sortable" data-col="5">Gain vs ME-SDPA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-ds="Pavia"><td>HSIMAE-B</td><td>Pavia</td><td>ME-SDPA</td><td>10499 ± 14</td><td>0.11</td><td>—</td></tr>
+            <tr data-ds="Pavia"><td>HSIMAE-B</td><td>Pavia</td><td class="best">ELSA</td><td class="best">14401 ± 53</td><td>0.11</td><td class="best">+37.1%<span class="badge-speedup">+37%</span></td></tr>
+            <tr data-ds="Pavia"><td>HSIMAE-L</td><td>Pavia</td><td>ME-SDPA</td><td>6471 ± 97</td><td>0.23</td><td>—</td></tr>
+            <tr data-ds="Pavia"><td>HSIMAE-L</td><td>Pavia</td><td class="best">ELSA</td><td class="best">10479 ± 91</td><td>0.25</td><td class="best">+62.0%<span class="badge-speedup">+62%</span></td></tr>
+            <tr data-ds="Salinas"><td>HSIMAE-B</td><td>Salinas</td><td>ME-SDPA</td><td>10427 ± 18</td><td>0.10</td><td>—</td></tr>
+            <tr data-ds="Salinas"><td>HSIMAE-B</td><td>Salinas</td><td class="best">ELSA</td><td class="best">14424 ± 106</td><td>0.10</td><td class="best">+38.3%<span class="badge-speedup">+38%</span></td></tr>
+            <tr data-ds="Salinas"><td>HSIMAE-L</td><td>Salinas</td><td>ME-SDPA</td><td>6490 ± 21</td><td>0.23</td><td>—</td></tr>
+            <tr data-ds="Salinas"><td>HSIMAE-L</td><td>Salinas</td><td class="best">ELSA</td><td class="best">10396 ± 27</td><td>0.25</td><td class="best">+60.2%<span class="badge-speedup">+60%</span></td></tr>
+            <tr data-ds="WHU"><td>HSIMAE-B</td><td>WHU</td><td>ME-SDPA</td><td>10631 ± 14</td><td>0.11</td><td>—</td></tr>
+            <tr data-ds="WHU"><td>HSIMAE-B</td><td>WHU</td><td class="best">ELSA</td><td class="best">14929 ± 16</td><td>0.11</td><td class="best">+40.4%<span class="badge-speedup">+40%</span></td></tr>
+            <tr data-ds="WHU"><td>HSIMAE-L</td><td>WHU</td><td>ME-SDPA</td><td>6588 ± 5</td><td>0.23</td><td>—</td></tr>
+            <tr data-ds="WHU"><td>HSIMAE-L</td><td>WHU</td><td class="best">ELSA</td><td class="best">10657 ± 7</td><td>0.24</td><td class="best">+61.7%<span class="badge-speedup">+62%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stat-chips">
+        <span class="stat-chip">HSIMAE-L peak: +62.0% throughput (Pavia)</span>
+        <span class="stat-chip">Negligible memory overhead across all configs</span>
+      </div>
+    </div>
+
+    <!-- ── Charts ── -->
+    <h3 class="title is-5" style="margin-top:1rem;">Visual Overview</h3>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>FP32 Latency (ms) — A100</h3>
+        <p>Single attn head · 1K / 4K / 16K tokens</p>
         <canvas id="chartLatency" height="200"></canvas>
       </div>
-
-      <div>
-        <h3 class="title is-6 has-text-centered" style="margin-bottom:0.2rem;">CLIP FP32 Speedup vs. Resolution</h3>
-        <p class="has-text-centered is-size-7 has-text-grey" style="margin-bottom:0.5rem;">ELSA vs. Math-SDPA &middot; four ViT variants</p>
+      <div class="chart-card">
+        <h3>CLIP Attention-Proxy Speedup vs. Resolution</h3>
+        <p>ELSA vs. Math-SDPA · four ViT variants (attention module only)</p>
         <canvas id="chartClip" height="200"></canvas>
       </div>
-
-      <div>
-        <h3 class="title is-6 has-text-centered" style="margin-bottom:0.2rem;">3D Reconstruction &mdash; VGGT Speedup</h3>
-        <p class="has-text-centered is-size-7 has-text-grey" style="margin-bottom:0.5rem;">ELSA-FP32 vs. xFormers-FP32 &middot; FastVGGT</p>
+      <div class="chart-card">
+        <h3>3D Reconstruction — VGGT Speedup</h3>
+        <p>ELSA-FP32 vs. xFormers-FP32 · FastVGGT</p>
         <canvas id="chartVggt" height="200"></canvas>
       </div>
-
-      <div>
-        <h3 class="title is-6 has-text-centered" style="margin-bottom:0.2rem;">Embedded Device &mdash; Jetson TX2</h3>
-        <p class="has-text-centered is-size-7 has-text-grey" style="margin-bottom:0.5rem;">ELSA vs. Math kernel &middot; FP32 &middot; batch&nbsp;1</p>
+      <div class="chart-card">
+        <h3>Embedded Device — Jetson TX2</h3>
+        <p>ELSA vs. Math kernel · FP32 · batch 1</p>
         <canvas id="chartJetson" height="200"></canvas>
       </div>
-
     </div>
-
-    <!-- Summary table -->
-    <h3 class="title is-5" style="margin-top:2.5rem;">Summary: FP32 Latency &amp; Memory at Scale</h3>
-    <table class="table is-fullwidth is-striped is-hoverable">
-      <thead>
-        <tr>
-          <th>Sequence Length</th>
-          <th>Math-SDPA</th>
-          <th>ME-SDPA</th>
-          <th>ELSA</th>
-          <th>Speedup vs. ME-SDPA</th>
-          <th>Peak Memory (ELSA)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>1,024</td><td>0.65 ms</td><td>0.25 ms</td><td><strong>0.19 ms</strong></td><td>1.3&times;</td><td>0.10 GB</td></tr>
-        <tr><td>4,096</td><td>8.28 ms</td><td>2.89 ms</td><td><strong>0.92 ms</strong></td><td>3.1&times;</td><td>0.15 GB</td></tr>
-        <tr><td>16,384</td><td>41.77 ms</td><td>12.06 ms</td><td><strong>3.46 ms</strong></td><td>3.5&times;</td><td>0.34 GB</td></tr>
-      </tbody>
-    </table>
 
   </div>
 </section>
-
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script>
-(function () {
-  const TEAL  = { bg: 'rgba(78,205,196,0.82)',  border: '#4ECDC4' };
-  const RED   = { bg: 'rgba(255,107,107,0.72)',  border: '#FF6B6B' };
-  const GRAY  = { bg: 'rgba(139,148,158,0.62)',  border: '#8B949E' };
-  const GOLD  = 'rgba(244,196,48,1)';
-
-  const tickCfg  = { color: '#555', font: { size: 11 } };
-  const gridCfg  = { color: 'rgba(0,0,0,0.07)' };
-  const legendCfg = { labels: { font: { size: 11 }, boxWidth: 14 } };
-
-  /* Chart 1: FP32 Latency grouped bars */
-  new Chart(document.getElementById("chartLatency"), {
-    type: "bar",
-    data: {
-      labels: ["1K tokens", "4K tokens", "16K tokens"],
-      datasets: [
-        { label: "Math-SDPA", data: [0.65, 8.28, 41.77], backgroundColor: GRAY.bg, borderColor: GRAY.border, borderWidth: 1.5 },
-        { label: "ME-SDPA",   data: [0.25, 2.89, 12.06], backgroundColor: RED.bg,  borderColor: RED.border,  borderWidth: 1.5 },
-        { label: "ELSA",      data: [0.19, 0.92,  3.46], backgroundColor: TEAL.bg, borderColor: TEAL.border, borderWidth: 1.5 }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: legendCfg,
-        tooltip: { callbacks: { label: ctx => " " + ctx.dataset.label + ": " + ctx.parsed.y + " ms" } }
-      },
-      scales: {
-        x: { ticks: tickCfg, grid: gridCfg },
-        y: { ticks: { ...tickCfg, callback: v => v + " ms" }, grid: gridCfg,
-             title: { display: true, text: "Latency (ms)", color: "#555", font: { size: 11 } } }
-      }
-    }
-  });
-
-  /* Chart 2: CLIP FP32 speedup vs resolution */
-  new Chart(document.getElementById("chartClip"), {
-    type: "line",
-    data: {
-      labels: ["224 px", "336 px", "448 px", "560 px"],
-      datasets: [
-        { label: "ViT-B/16",     data: [1.46,1.63,1.79,1.98], borderColor:"#4ECDC4", backgroundColor:"rgba(78,205,196,0.10)", tension:0.3, pointRadius:5, fill:true },
-        { label: "ViT-L/14",     data: [1.54,1.68,1.87,2.12], borderColor: GOLD,     backgroundColor:"rgba(244,196,48,0.08)", tension:0.3, pointRadius:5, fill:true },
-        { label: "ViT-L/14-336", data: [1.56,1.71,1.90,2.15], borderColor:"#FF6B6B", backgroundColor:"rgba(255,107,107,0.07)",tension:0.3, pointRadius:5, fill:true },
-        { label: "1× baseline",  data: [1,1,1,1], borderColor:"#bbb", borderDash:[6,3], pointRadius:0, fill:false }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: legendCfg },
-      scales: {
-        x: { ticks: tickCfg, grid: gridCfg },
-        y: { min: 0.9, ticks: { ...tickCfg, callback: v => v + "×" }, grid: gridCfg,
-             title: { display: true, text: "Speedup vs. Math-SDPA", color: "#555", font: { size: 11 } } }
-      }
-    }
-  });
-
-  /* Chart 3: FastVGGT frame scaling */
-  new Chart(document.getElementById("chartVggt"), {
-    type: "line",
-    data: {
-      labels: ["15","30","100","150","200","300","400"],
-      datasets: [
-        { label: "ELSA-FP32 Speedup", data: [0.94,0.89,1.18,1.23,1.30,1.33,1.38],
-          borderColor:"#4ECDC4", backgroundColor:"rgba(78,205,196,0.13)", tension:0.3, pointRadius:5, fill:true },
-        { label: "1× (xFormers)", data: [1,1,1,1,1,1,1],
-          borderColor:"#bbb", borderDash:[6,3], pointRadius:0, fill:false }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: legendCfg },
-      scales: {
-        x: { ticks: tickCfg, grid: gridCfg,
-             title: { display:true, text:"Frames", color:"#555", font:{ size:11 } } },
-        y: { min: 0.7, ticks: { ...tickCfg, callback: v => v + "×" }, grid: gridCfg,
-             title: { display:true, text:"Speedup", color:"#555", font:{ size:11 } } }
-      }
-    }
-  });
-
-  /* Chart 4: Jetson TX2 latency */
-  new Chart(document.getElementById("chartJetson"), {
-    type: "line",
-    data: {
-      labels: ["64","100","144","196","256","324","400","484","576","676","784","900"],
-      datasets: [
-        { label: "Math kernel (FP32)",
-          data: [1.06,2.64,5.47,10.10,16.74,27.22,41.23,60.01,84.54,116.85,157.45,207.55],
-          borderColor: GRAY.border, backgroundColor:"rgba(139,148,158,0.08)", tension:0.3, pointRadius:3, fill:false },
-        { label: "ELSA (FP32)",
-          data: [0.69,1.71,3.53,6.47,10.52,17.24,25.95,37.63,52.78,73.03,98.47,129.74],
-          borderColor:"#4ECDC4", backgroundColor:"rgba(78,205,196,0.13)", tension:0.3, pointRadius:3, fill:true }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: legendCfg },
-      scales: {
-        x: { ticks: tickCfg, grid: gridCfg,
-             title: { display:true, text:"Tokens", color:"#555", font:{ size:11 } } },
-        y: { ticks: { ...tickCfg, callback: v => v + " ms" }, grid: gridCfg,
-             title: { display:true, text:"Latency (ms)", color:"#555", font:{ size:11 } } }
-      }
-    }
-  });
-})();
-</script>
 
 <!-- ══ BibTeX ══════════════════════════════════════════════════════════════ -->
 <section class="section" id="BibTeX">
@@ -526,6 +787,196 @@
     </div>
   </div>
 </footer>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+/* ══════════════════════════════════════════
+   INTERACTIVE TABLE ENGINE
+══════════════════════════════════════════ */
+(function () {
+  // ── Filter buttons ──
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const tab   = this.dataset.tab;
+      const col   = this.dataset.col;
+      const val   = this.dataset.val;
+
+      // toggle active within same tab+col group
+      document.querySelectorAll(`.filter-btn[data-tab="${tab}"][data-col="${col}"]`)
+        .forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+
+      // filter rows
+      const tableId = 'itab-' + tab;
+      const tableEl = document.getElementById(tableId);
+      if (!tableEl) return;
+      tableEl.querySelectorAll('tbody tr').forEach(row => {
+        if (val === 'all') {
+          row.classList.remove('row-hidden');
+        } else {
+          const cellVal = row.dataset[col] || '';
+          if (cellVal.toLowerCase().includes(val.toLowerCase())) {
+            row.classList.remove('row-hidden');
+          } else {
+            row.classList.add('row-hidden');
+          }
+        }
+      });
+    });
+  });
+
+  // ── Sortable columns ──
+  document.querySelectorAll('.itab').forEach(table => {
+    table.querySelectorAll('thead th.sortable').forEach(th => {
+      th.addEventListener('click', function () {
+        const colIdx = parseInt(this.dataset.col);
+        const isDesc = this.classList.contains('sort-desc');
+        const dir    = isDesc ? 1 : -1;
+
+        // reset other headers
+        table.querySelectorAll('thead th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+        this.classList.toggle('sort-asc',  isDesc);
+        this.classList.toggle('sort-desc', !isDesc);
+
+        const tbody = table.querySelector('tbody');
+        const rows  = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+          const av = a.cells[colIdx]?.textContent.trim() || '';
+          const bv = b.cells[colIdx]?.textContent.trim() || '';
+          const an = parseFloat(av);
+          const bn = parseFloat(bv);
+          if (!isNaN(an) && !isNaN(bn)) return dir * (an - bn);
+          return dir * av.localeCompare(bv);
+        });
+        rows.forEach(r => tbody.appendChild(r));
+      });
+    });
+  });
+})();
+
+/* ══════════════════════════════════════════
+   CHARTS (corrected data)
+══════════════════════════════════════════ */
+(function () {
+  const TEAL = { bg: 'rgba(0,191,165,0.78)',  border: '#00bfa5' };
+  const RED  = { bg: 'rgba(239,83,80,0.65)',  border: '#ef5350' };
+  const GRAY = { bg: 'rgba(96,125,139,0.55)', border: '#607d8b' };
+  const GOLD = 'rgba(249,168,37,1)';
+
+  const tickCfg   = { color:'#546e7a', font:{ size:11 } };
+  const gridCfg   = { color:'rgba(0,0,0,0.06)' };
+  const legendCfg = { labels:{ font:{ size:11 }, boxWidth:14 } };
+
+  /* Chart 1 — FP32 Latency */
+  new Chart(document.getElementById('chartLatency'), {
+    type: 'bar',
+    data: {
+      labels: ['1K tokens','4K tokens','16K tokens'],
+      datasets: [
+        { label:'Math-SDPA', data:[0.65, 8.28, null],  backgroundColor:GRAY.bg, borderColor:GRAY.border, borderWidth:1.5 },
+        { label:'ME-SDPA',   data:[0.25, 2.89, 12.06], backgroundColor:RED.bg,  borderColor:RED.border,  borderWidth:1.5 },
+        { label:'ELSA',      data:[0.19, 0.92,  3.46], backgroundColor:TEAL.bg, borderColor:TEAL.border, borderWidth:1.5 }
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins: {
+        legend: legendCfg,
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              if (ctx.raw === null) return ' Math-SDPA: OOM';
+              return ` ${ctx.dataset.label}: ${ctx.parsed.y} ms`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks:tickCfg, grid:gridCfg },
+        y: { ticks:{ ...tickCfg, callback: v => v+' ms' }, grid:gridCfg,
+             title:{ display:true, text:'Latency (ms)', color:'#546e7a', font:{size:11} } }
+      }
+    }
+  });
+
+  /* Chart 2 — CLIP attention-proxy speedup (corrected: no SAM, note proxy scope) */
+  new Chart(document.getElementById('chartClip'), {
+    type: 'line',
+    data: {
+      labels: ['224 px','336 px','448 px†','560 px†'],
+      datasets: [
+        { label:'ViT-B/16',     data:[1.46,1.63,1.79,1.98], borderColor:'#00bfa5', backgroundColor:'rgba(0,191,165,0.08)', tension:.3, pointRadius:5, fill:true },
+        { label:'ViT-L/14',     data:[1.54,1.68,1.87,2.12], borderColor:GOLD,      backgroundColor:'rgba(249,168,37,0.07)', tension:.3, pointRadius:5, fill:true },
+        { label:'ViT-L/14-336', data:[1.56,1.71,1.90,2.15], borderColor:'#ef5350', backgroundColor:'rgba(239,83,80,0.06)', tension:.3, pointRadius:5, fill:true },
+        { label:'1× baseline',  data:[1,1,1,1], borderColor:'#ccc', borderDash:[6,3], pointRadius:0, fill:false }
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins: {
+        legend: legendCfg,
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}×` } }
+      },
+      scales: {
+        x: { ticks:tickCfg, grid:gridCfg },
+        y: { min:0.9, ticks:{ ...tickCfg, callback: v => v+'×' }, grid:gridCfg,
+             title:{ display:true, text:'Speedup vs. Math-SDPA (attn only)', color:'#546e7a', font:{size:11} } }
+      }
+    }
+  });
+
+  /* Chart 3 — FastVGGT frame scaling (corrected: starts meaningful gain at 100+ frames) */
+  new Chart(document.getElementById('chartVggt'), {
+    type: 'line',
+    data: {
+      labels: ['15','30','100','150','200','300','400'],
+      datasets: [
+        { label:'ELSA-FP32 Speedup',
+          data:[0.94, 0.89, 1.18, 1.23, 1.30, 1.33, 1.38],
+          borderColor:'#00bfa5', backgroundColor:'rgba(0,191,165,0.11)', tension:.3, pointRadius:5, fill:true },
+        { label:'1× (xFormers baseline)',
+          data:[1,1,1,1,1,1,1],
+          borderColor:'#bbb', borderDash:[6,3], pointRadius:0, fill:false }
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins: { legend:legendCfg },
+      scales: {
+        x: { ticks:tickCfg, grid:gridCfg, title:{ display:true, text:'Frames', color:'#546e7a', font:{size:11} } },
+        y: { min:0.7, ticks:{ ...tickCfg, callback: v => v+'×' }, grid:gridCfg,
+             title:{ display:true, text:'Speedup vs. xFormers-FP32', color:'#546e7a', font:{size:11} } }
+      }
+    }
+  });
+
+  /* Chart 4 — Jetson TX2 (corrected data from Table 6) */
+  new Chart(document.getElementById('chartJetson'), {
+    type: 'line',
+    data: {
+      labels: ['64','100','144','196','256','324','400','484','576','676','784','900'],
+      datasets: [
+        { label:'Math kernel (FP32)',
+          data:[1.06,2.64,5.47,10.12,16.77,27.29,41.34,60.16,84.76,117.18,157.89,208.91],
+          borderColor:GRAY.border, backgroundColor:'rgba(96,125,139,0.06)', tension:.3, pointRadius:3, fill:false },
+        { label:'ELSA (FP32)',
+          data:[0.69,1.71,3.54,6.48,10.54,17.28,26.04,37.74,52.96,73.33,98.86,131.14],
+          borderColor:'#00bfa5', backgroundColor:'rgba(0,191,165,0.11)', tension:.3, pointRadius:3, fill:true }
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:legendCfg },
+      scales: {
+        x: { ticks:tickCfg, grid:gridCfg, title:{ display:true, text:'Tokens', color:'#546e7a', font:{size:11} } },
+        y: { ticks:{ ...tickCfg, callback: v => v+' ms' }, grid:gridCfg,
+             title:{ display:true, text:'Latency (ms)', color:'#546e7a', font:{size:11} } }
+      }
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
