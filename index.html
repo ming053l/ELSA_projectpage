@@ -765,6 +765,229 @@
   </div>
 </section>
 
+<!-- ══ Drop-in Demo ════════════════════════════════════════════════════════ -->
+<section class="section" id="dropin">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Drop-in in Seconds</h2>
+    <p class="has-text-grey" style="margin-bottom:1.5rem;">
+      No retraining. No architecture changes. Pick your entry point and swap one line.
+    </p>
+
+    <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:0;">
+      <button class="code-tab active" data-target="tab-raw">Raw Q/K/V</button>
+      <button class="code-tab" data-target="tab-module">ElsaAttention</button>
+      <button class="code-tab" data-target="tab-patch">Patch timm ViT</button>
+      <button class="code-tab" data-target="tab-llama">LLaMA / HF</button>
+    </div>
+
+    <!-- pane: raw -->
+    <div class="code-pane active" id="tab-raw">
+      <div class="code-badge"><span class="badge-level">Level 1</span><span class="badge-desc">Raw kernel — you already have Q, K, V</span></div>
+      <div class="code-diff">
+        <div class="diff-col diff-before">
+          <div class="diff-label">Before</div>
+<pre class="diff-code"><span class="diff-del">import torch.nn.functional as F</span>
+
+out = <span class="diff-del">F.scaled_dot_product_attention(</span>
+    q, k, v, scale=scale
+<span class="diff-del">)</span></pre>
+        </div>
+        <div class="diff-arrow">→</div>
+        <div class="diff-col diff-after">
+          <div class="diff-label">After (ELSA)</div>
+<pre class="diff-code"><span class="diff-add">from elsa import ELSA_triton_fp32</span>
+
+out = <span class="diff-add">ELSA_triton_fp32.apply(</span>
+    q, k, v, scale
+<span class="diff-add">)</span></pre>
+        </div>
+      </div>
+      <div class="code-note">✓ FP32 exact &nbsp;·&nbsp; ✓ O(n) memory &nbsp;·&nbsp; ✓ works on any CUDA GPU incl. Jetson TX2</div>
+    </div>
+
+    <!-- pane: module -->
+    <div class="code-pane" id="tab-module">
+      <div class="code-badge"><span class="badge-level">Level 2</span><span class="badge-desc">Replace one attention layer in your model</span></div>
+      <div class="code-diff">
+        <div class="diff-col diff-before">
+          <div class="diff-label">Before</div>
+<pre class="diff-code"><span class="diff-del">from timm.models.vision_transformer \
+    import Attention</span>
+
+self.attn = <span class="diff-del">Attention(</span>
+    dim=768,
+    num_heads=12
+<span class="diff-del">)</span></pre>
+        </div>
+        <div class="diff-arrow">→</div>
+        <div class="diff-col diff-after">
+          <div class="diff-label">After (ELSA)</div>
+<pre class="diff-code"><span class="diff-add">from elsa import ElsaAttention</span>
+
+self.attn = <span class="diff-add">ElsaAttention(</span>
+    dim=768,
+    num_heads=12,
+    <span class="diff-add">backend="auto"</span>
+<span class="diff-add">)</span></pre>
+        </div>
+      </div>
+      <div class="code-note">✓ Matches timm Attention interface exactly &nbsp;·&nbsp; ✓ <code>backend="auto"</code> selects best kernel per dtype</div>
+    </div>
+
+    <!-- pane: patch -->
+    <div class="code-pane" id="tab-patch">
+      <div class="code-badge"><span class="badge-level">Level 3</span><span class="badge-desc">Patch a pretrained timm model — zero model-code changes</span></div>
+      <div class="code-diff">
+        <div class="diff-col diff-before">
+          <div class="diff-label">Before</div>
+<pre class="diff-code">import timm
+
+model = timm.create_model(
+    "vit_large_patch14_clip_224",
+    pretrained=True
+).cuda().eval()
+
+with torch.no_grad():
+    out = model(images)</pre>
+        </div>
+        <div class="diff-arrow">→</div>
+        <div class="diff-col diff-after">
+          <div class="diff-label">After (ELSA) — 2 lines added</div>
+<pre class="diff-code">import timm
+<span class="diff-add">from elsa import patch_vit_attention</span>
+
+model = timm.create_model(
+    "vit_large_patch14_clip_224",
+    pretrained=True
+).cuda().eval()
+<span class="diff-add">patch_vit_attention(model,
+    method="elsa", precision="fp32")</span>
+with torch.no_grad():
+    out = model(images)</pre>
+        </div>
+      </div>
+      <div class="code-note">✓ Weights untouched &nbsp;·&nbsp; ✓ accuracy identical &nbsp;·&nbsp; ✓ up to <strong>2.15× attention speedup</strong> on CLIP ViT-L/14</div>
+    </div>
+
+    <!-- pane: llama -->
+    <div class="code-pane" id="tab-llama">
+      <div class="code-badge"><span class="badge-level">Level 5</span><span class="badge-desc">HuggingFace LLaMA — FP32 long-context inference</span></div>
+      <div class="code-diff">
+        <div class="diff-col diff-before">
+          <div class="diff-label">Before</div>
+<pre class="diff-code">from transformers import \
+    AutoModelForCausalLM
+
+model = AutoModelForCausalLM\
+  .from_pretrained(
+    "meta-llama/Llama-2-13b-hf",
+    torch_dtype=torch.float32,
+    device_map="cuda"
+  )
+
+<span class="diff-del"># OOM at ≥32K tokens in FP32</span>
+out = model(**long_input)</pre>
+        </div>
+        <div class="diff-arrow">→</div>
+        <div class="diff-col diff-after">
+          <div class="diff-label">After (ELSA) — 2 lines added</div>
+<pre class="diff-code">from transformers import \
+    AutoModelForCausalLM
+<span class="diff-add">from elsa import patch_llama_attention</span>
+
+model = AutoModelForCausalLM\
+  .from_pretrained(
+    "meta-llama/Llama-2-13b-hf",
+    torch_dtype=torch.float32,
+    device_map="cuda"
+  )
+<span class="diff-add">patch_llama_attention(model)</span>
+out = model(**long_input)</pre>
+        </div>
+      </div>
+      <div class="code-note">✓ No retraining &nbsp;·&nbsp; ✓ perplexity identical &nbsp;·&nbsp; ✓ <strong>+20.1% throughput</strong> at 65K tokens (LLaMA-13B, FP32 offloading)</div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .code-tab {
+    padding: .45rem 1.1rem; border-radius: 6px 6px 0 0;
+    border: 1px solid var(--border); border-bottom: none;
+    background: #f0f4f5; color: var(--text-soft);
+    font-size: .85rem; font-weight: 600; cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .code-tab:hover  { background: #e0f2f1; color: var(--teal); }
+  .code-tab.active {
+    background: #fff; color: var(--teal);
+    border-bottom: 2px solid #fff; margin-bottom: -1px;
+    z-index: 1; position: relative;
+  }
+  .code-pane {
+    display: none; background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 0 var(--radius) var(--radius) var(--radius);
+    padding: 1.4rem; box-shadow: var(--shadow);
+  }
+  .code-pane.active { display: block; }
+  .code-badge { display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+  .badge-level {
+    background: var(--teal); color: #fff;
+    font-size: .75rem; font-weight: 700;
+    padding: .2rem .65rem; border-radius: 20px;
+  }
+  .badge-desc { font-size: .88rem; color: var(--text-soft); font-weight: 500; }
+  .code-diff { display: flex; gap: .8rem; align-items: flex-start; margin-bottom: .9rem; }
+  .diff-col   { flex: 1; min-width: 0; }
+  .diff-arrow {
+    flex: 0 0 auto; align-self: center;
+    font-size: 1.5rem; color: var(--teal); font-weight: 700;
+    margin-top: 1.4rem;
+  }
+  .diff-label {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; margin-bottom: .3rem;
+  }
+  .diff-before .diff-label { color: var(--red); }
+  .diff-after  .diff-label { color: var(--teal); }
+  .diff-code {
+    background: #1a2530; color: #cdd8de;
+    border-radius: 6px; padding: .9rem 1rem;
+    font-size: .79rem; line-height: 1.65;
+    overflow-x: auto; margin: 0;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    white-space: pre;
+  }
+  .diff-before .diff-code { border-top: 3px solid var(--red); }
+  .diff-after  .diff-code { border-top: 3px solid var(--teal); }
+  .diff-del { background: rgba(239,83,80,.22); color: #ff8a80; border-radius: 2px; padding: 0 2px; }
+  .diff-add { background: rgba(0,191,165,.22); color: #64ffda; border-radius: 2px; padding: 0 2px; }
+  .code-note {
+    background: var(--teal-light); border-left: 4px solid var(--teal);
+    border-radius: 0 4px 4px 0; padding: .55rem .9rem;
+    font-size: .82rem; color: #004d40; font-weight: 500;
+  }
+  @media (max-width: 640px) {
+    .code-diff { flex-direction: column; }
+    .diff-arrow { align-self: center; transform: rotate(90deg); margin: 0; }
+  }
+</style>
+
+<script>
+(function () {
+  document.querySelectorAll('.code-tab').forEach(tab => {
+    tab.addEventListener('click', function () {
+      const target = this.dataset.target;
+      document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.code-pane').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+})();
+</script>
+
 <!-- ══ BibTeX ══════════════════════════════════════════════════════════════ -->
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
