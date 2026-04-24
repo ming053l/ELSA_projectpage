@@ -299,7 +299,7 @@
           <strong>3.5&times; speedup over ME-SDPA</strong> at 16K tokens.
           On <strong>CLIP ViT-L/14</strong> (strict FP32), ELSA reduces full image-encoder
           latency by <strong>3.7%</strong> as a drop-in replacement—no retraining, no precision loss.
-          At the attention-module level, speedup reaches <strong>1.54–2.15×</strong> depending
+          At the attention-module level, speedup reaches <strong>1.46–2.15×</strong> depending
           on resolution; gains are partially amortized in the full pipeline by non-attention compute.
           On <strong>Jetson TX2</strong> (edge device),
           ELSA achieves a consistent <strong>~1.6&times; speedup</strong> over the Math kernel
@@ -506,11 +506,6 @@
         size, by a single-pass precomputation. The animation below contrasts brute-force box
         filtering (recomputing every neighborhood from scratch) with the SAT approach:
       </p>
-      <div class="motivation-video-wrap">
-        <video autoplay muted loop playsinline>
-          <source src="./static/videos/integral_fill.mp4" type="video/mp4">
-        </video>
-      </div>
       <p>
         Softmax attention faces an analogous bottleneck. The standard online recurrence of
         Rabe &amp; Staats compresses the $O(n^2)$ attention matrix to $O(n)$ memory, but at
@@ -1195,7 +1190,7 @@ out = model(**long_input)</pre>
       <div class="stat-chips">
         <span class="stat-chip">FP32 peak speedup: 3.49× (16K)</span>
         <span class="stat-chip">ELSA lowest memory at 16K FP16: 0.19 GB</span>
-        <span class="stat-chip">Math-SDPA OOM beyond 4K (FP32)</span>
+        <span class="stat-chip">Math-SDPA OOM at 16K tokens (FP32)</span>
       </div>
     </div>
 
@@ -1442,7 +1437,7 @@ out = model(**long_input)</pre>
             </tr>
           </thead>
           <tbody>
-            <tr data-ds="Pavia"><td>HSIMAE-B</td><td>Pavia</td><td>ME-SDPA</td><td>10499 ± 14</td><td>0.11</td><td>—</td></tr>
+            <tr data-ds="Pavia"><td>HSIMAE-B</td><td>Pavia</td><td>ME-SDPA</td><td>10489 ± 14</td><td>0.11</td><td>—</td></tr>
             <tr data-ds="Pavia"><td>HSIMAE-B</td><td>Pavia</td><td class="best">ELSA</td><td class="best">14401 ± 53</td><td>0.11</td><td class="best">+37.1%<span class="badge-speedup">+37%</span></td></tr>
             <tr data-ds="Pavia"><td>HSIMAE-L</td><td>Pavia</td><td>ME-SDPA</td><td>6471 ± 97</td><td>0.23</td><td>—</td></tr>
             <tr data-ds="Pavia"><td>HSIMAE-L</td><td>Pavia</td><td class="best">ELSA</td><td class="best">10479 ± 91</td><td>0.25</td><td class="best">+62.0%<span class="badge-speedup">+62%</span></td></tr>
