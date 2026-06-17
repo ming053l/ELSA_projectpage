@@ -70,6 +70,25 @@
       margin-top: 6px; font-style: italic;
     }
 
+    /* ── Award banner ── */
+    .award-banner {
+      display: inline-flex; align-items: center; gap: .55rem;
+      margin: 14px auto 4px;
+      padding: .5rem 1.1rem;
+      background: linear-gradient(90deg, #fff8e1 0%, #ffecb3 50%, #fff8e1 100%);
+      border: 1.5px solid var(--gold);
+      border-radius: 30px;
+      box-shadow: 0 2px 10px rgba(249,168,37,0.28);
+      font-size: 1rem; color: #7a5300;
+      animation: award-glow 2.4s ease-in-out infinite;
+    }
+    .award-banner strong { color: #6d4c00; }
+    .award-icon { font-size: 1.25rem; line-height: 1; }
+    @keyframes award-glow {
+      0%, 100% { box-shadow: 0 2px 10px rgba(249,168,37,0.28); }
+      50%      { box-shadow: 0 2px 18px rgba(249,168,37,0.55); }
+    }
+
     /* ── TL;DR box ── */
     .tldr-box {
       background: var(--bg-card);
@@ -247,16 +266,20 @@
             <span class="author-block">National Yang Ming Chiao Tung University</span>
           </div>
           <h1 style="font-size:24px; font-weight:bold; margin-top:10px;">CVPR Findings 2026</h1>
+          <div class="award-banner">
+            <span class="award-icon">🏆</span>
+            <span>ELSA received the <strong>CVPR 2026 Computational Transparency Award Champion!!</strong></span>
+          </div>
           <p class="promo-slogan">Can't use FA on your device? Try ELSA on!</p>
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
-                <a href="https://arxiv.org/pdf/2604.23798" class="external-link button is-normal is-rounded is-dark">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
                 </a>
               </span>
               <span class="link-block">
-                <a href="https://arxiv.org/abs/2604.23798" class="external-link button is-normal is-rounded is-dark">
+                <a href="https://arxiv.org/abs/2603.11000" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
                 </a>
               </span>
